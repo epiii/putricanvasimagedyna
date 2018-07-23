@@ -434,44 +434,40 @@ if(isset($_POST['claim'])){
 				imageURLs.push(templUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
 				imageURLs.push(profUrl); // layer 2 (top) -? promote :
 			}
-			putObject();
+			createCanvas(putObject);
 		}
 
 
-		createCanvas(putObject);
-
 		function putObject() {
 			console.log('putObject');
-			console.log(imgs);
+			// console.log(imgs.length);
+			// console.log(imgs[0]);
 
-			// context.width = imgs[0].naturalWidth;
-			// context.height = imgs[0].naturalHeight;
-			// canvas.width = e.naturalWidth;
-			// canvas.height = e.naturalHeight;
+			context.width = imgs[0].naturalWidth;
+			context.height = imgs[0].naturalHeight;
+			console.log(imgs[0]);
+			console.log(imgs[1]);
 			console.log(context.width);
 			console.log(context.height);
-
-			// if (tipex=='promote') {
-			// 	 console.log('promote');
-				 		// context.drawImage(imgs[0],0,0);
-				 // context.drawImage(this,koordx,koordy);
+			// canvas.width = e.naturalWidth;
+			// canvas.height = e.naturalHeight;
+			// console.log(context.width);
+			// console.log(context.height);
+				 context.drawImage(imgs[0],0,0);
 				 // context.drawImage(this,0,0);
+
 				 // context.drawImage(this,koordx,koordy);
 				 context.fillText("<?php echo $nama_lengkap;?>", 250, 400);
 				 context.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
 				 context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
-
-				 // context.drawImage(this, 0, 0);//,150,150);
-			// } else {
-			// 		console.log('frame');
-			// 		context.drawImage(this, 0, 0);
-			// 		// context.drawImage(this, 0, 0,150,150);
-			// }
 		}
 
 
 		function createCanvas(putObjectx) {
+			imgs=[];
 			console.log('createCanvas');
+			// console.log(imageURLs);
+			// console.log(imgs.length);
 
 		// function loadCanvas(e,tipex,koordx,koordy) {
 			$('#imagePreview').attr('style','display:none');
@@ -495,11 +491,17 @@ if(isset($_POST['claim'])){
 			}
 		}
 
-
-
 		function resetForm () {
 			$('#canvasQ').html('');
 			$('#imagePreview').removeAttr('style');
+
+			imgs=[];
+			imagesOK=0;
+			imageURLs	= [];
+			imgUrl1 = '';
+			imgUrl2 = '';
+			e,tipe='',koordx='',koordy='';
+
 		}
 
 
