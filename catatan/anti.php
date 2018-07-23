@@ -47,12 +47,17 @@ if($usr != 'no'){
 			$data_pgg = kunjungan($con,$db);
 			$judul = "Dashboard Kunjungan";
 		}
+		if($hala == 'img'){
+			// // var_dump($data_pgg);
+			// $data_pgg = checkFbProfile($con,$fbid);
+			// $judul = "Dashboard Kunjungan";
+		}
 	}else{
 		$judul = 'Daftar Tagihan';
 		$data_pgg = tagihan($con,$db,$usr,$halaman,$batas,$th1,$th2);
 	}
 }else{
-	$judul ='';
+	$judul 		='';
 	$data_pgg ='';
 	header("Location: ganti_fb.php");
 }
@@ -145,8 +150,9 @@ if(isset($_POST['claim'])){
             </div>
         </div>
 		';
+	}
 }
-}
+
 ?>
 <!doctype html>
 <html lang="en">
@@ -170,7 +176,7 @@ if(isset($_POST['claim'])){
 	    <link href="../home/css/examples.css" rel="stylesheet" />
 
 
-		<script src="../bootstrap3/js/jquery.min.js"></script>
+			<script src="../bootstrap3/js/jquery.min.js"></script>
 	    <script src="../bootstrap3/js/bootstrap.min.js"></script>
 	    <script src="../assets/bootstrap-tour/js/bootstrap-tour.min.js"></script>
 
@@ -185,99 +191,16 @@ if(isset($_POST['claim'])){
 		})(window,document,'script','dataLayer','GTM-WV7W67N');</script>
 
 		<style media="screen">
-			/* body {
-				background-color: ivory;
-			} */
-			.outsideWrapper {
-				width:125px;
-				height:125px;
-				/* margin:20px 60px; */
-				/* border:1px solid blue; */
-
-				border: 3px solid #73AD21;
+			.imageOption{
+				height: 150px;
+				border: 5px dashed #CCC;
+				cursor: pointer;
 			}
-			.insideWrapper {
-				width:100%;
-				height:100%;
-				position:relative;
-
-				border: 3px solid #73AD21;
+			.imageOption.active{
+				border: 5px dashed #000;
 			}
 
-			/* FB profile  */
-			.coveredImage {
-				width:100%;
-				height:100%;
-				top:0px;
-				left:30px;
-				position:absolute; /* overlay on other image */
-				/* position:relative; */
-				/* float: right; */
-
-				border: 3px solid #73AD21;
-			}
-			.bottom-right {
-			    position: absolute;
-			    bottom: 8px;
-			    right: 16px;
-			}
-			/* Centered text */
-			.centeredText {
-			    position: absolute;
-			    top: 50%;
-			    left: 50%;
-			    transform: translate(-50%, -50%);
-
-					border: 3px solid #73AD21;
-			}
-			.right-align {
-			    position: absolute;
-			    /* right: -50px; */
-			    bottom: 0px;
-					width: 100%;
-			    /* right: 0px; */
-			    /* width: 300px; */
-			    border: 3px solid #73AD21;
-			    /* padding: 10px; */
-					color:white;
-			}
-
-			.right-float{
-		    float: right;
-		    width: 300px;
-		    border: 3px solid #73AD21;
-		    padding: 10px;
-			}
-			.coveringCanvas {
-				width:100%;
-				height:100%;
-				position:absolute;
-				top:0px;
-				left:0px;
-				background:url('SF1.png');
-				/* background-color: rgba(255, 0, 0, .1); */
-				/* background-color: rgba(255, 0, 0, .1); */
-			}
-
-
-			.divx {
-			    border: 3px solid #4CAF50;
-			    padding: 5px;
-			}
-
-			.img1 {
-			    float: right;
-			}
-
-			.clearfix {
-			    overflow: auto;
-			}
-
-			.img2 {
-			    float: right;
-			}
 		</style>
-
 	</head>
 	<body class="search">
 	<?php echo $notif_cl; ?>
@@ -333,6 +256,7 @@ if(isset($_POST['claim'])){
 												  </div>
 												</div>
                         <ul class="list-unstyled follows">
+													<!-- nah -->
 													<?php echo $data_pgg;?>
                         </ul>
                         <div class="text-missing">
@@ -340,12 +264,39 @@ if(isset($_POST['claim'])){
                         </div>
                       </div>
 
-											<div class="col-md-6 col-xs-12 text-center">
-												<img id="canvasLoder" src="fb_loader.gif" alt="">
-												<canvas id="canvasQ" xwidth="630" xheight="840"></canvas>
-												<img id="canvasMirror">
-												<a href="#" download="nama_file_ku.png" id="downloadBtn" class="btn btn-info"><i class="fa fa-download"></i> Download</a>
+										<!-- image (profile & promote) -->
+											<div id="imageDiv" class="col-md-6 col-xs-12 text-center">
+												<form id="image-form" enctype="multipart/form-data">
+													<!-- tipe -->
+													<div class="form-group">
+									          <label>Mode</label>
+														<select onchange="showAllImages(this.value);"  class="form-control" name="tipe" id="mode">
+															<option value="">-Select Mode-</option>
+															<option value="frame">Frame</option>
+															<option value="promote">Promote</option>
+														</select>
+									        </div>
+
+													<!-- preview options -->
+									        <div id="imageOptions" class="form-group"></div>
+
+													<!-- preview result image -->
+													<div class="form-group">
+														<img id="imagePreview" width="250" src="../uploads/no_preview.png" alt="" />
+														<canvas id="canvasQ">
+														</canvas>
+									        </div>
+
+													<!-- <input type="hidden" id="tempImagePreview"> -->
+									        <button  class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+									      </form>
+
+												<!-- <img id="canvasLoder" src="fb_loader.gif" alt=""> -->
+												<!-- <canvas id="canvasQ" xwidth="630" xheight="840"></canvas> -->
+												<!-- <img id="canvasMirror">
+												<a href="#" download="nama_file_ku.png" id="downloadBtn" class="btn btn-info"><i class="fa fa-download"></i> Download</a> -->
 											</div>
+										<!-- end of : image (profile & promote) -->
 
 	                </div>
 		            </div>
@@ -381,6 +332,11 @@ if(isset($_POST['claim'])){
 														Kunjungan
 													</a>
 												</li>
+												<!-- <li>
+													<a href="?t=img" id="panel6">
+														Image
+													</a>
+												</li> -->
 		        </ul>
 		      </nav>
 		      <div class="copyright pull-right">
@@ -392,210 +348,256 @@ if(isset($_POST['claim'])){
 	</body>
 
 	<script>
-	// contoh 3
-		// canvas related variables
-			var canvas=document.getElementById("canvasQ");
-			var mirror = document.getElementById('canvasMirror');
+		$(document).ready(function(){
 
-			var ctx=canvas.getContext("2d");
-			var cw=canvas.width;
-			var ch=canvas.height;
-
-		// put the paths to your images in imageURLs[]
-			var imageURLs	= [];
-				var urlTemplate = 'SF1.png';
-				var urlProfile = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
-				imageURLs.push(urlTemplate);
-				imageURLs.push(urlProfile);
-
-			// Do drawImage & fillText
-			function imagesAreNowLoaded(){
-				$('#canvasLoder').attr('style','display:none')
-				// ctx.font="700px sans-serif";
-				// ctx.fillStyle="#333333";
-				ctx.font = "90px Comic Sans MS";
-				ctx.fillStyle = "blue";
-				ctx.textAlign = "center";
-
-				wTemplate = imgs[0].naturalWidth;
-				hTemplate = imgs[0].naturalHeight;
-				canvas.width=mirror.width=wTemplate;
-				canvas.height=mirror.height=hTemplate;
-
-				ctx.drawImage(imgs[0],0,0);
-
-				// roundedImage(10, 10, 120,120, 10);
-				// ctx.clip();
-				ctx.drawImage(imgs[1],490,330,120,120);
-				ctx.fillText("<?php echo $nama_lengkap;?>", 250, 400);
-				ctx.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
-				ctx.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
-				// ctx.fillText("http://"+"<?php echo $nama_lengkap;?>"+".sukses.family", 250,440);
-			}
-
-		// the loaded images will be placed in imgs[]
-			var imgs=[];
-			var imagesOK=0;
-			startLoadingAllImages(imagesAreNowLoaded);
-
-			function startLoadingAllImages(callback){ // When all images are loaded, run the callback (==imagesAreNowLoaded)
-				for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
-					var img = new Image(); // create a new image an push it into the imgs[] array
-					imgs.push(img);
-
-					img.onload = function(){// when this image loads, call this img.onload
-						imagesOK++; // this img loaded, increment the image counter
-						if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
-							callback();
-						}
-					};
-
-					img.onerror=function(){ // notify if there's an error
-						alert("image load failed");
-					}
-					img.src = imageURLs[i]; // set img properties
-				}
-			}
-
-		// rounded shape
-			function roundedImage(x, y, width, height, radius) {
-			    ctx.beginPath();
-			    ctx.moveTo(x + radius, y);
-			    ctx.lineTo(x + width - radius, y);
-			    ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-			    ctx.lineTo(x + width, y + height - radius);
-			    ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-			    ctx.lineTo(x + radius, y + height);
-			    ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-			    ctx.lineTo(x, y + radius);
-			    ctx.quadraticCurveTo(x, y, x + radius, y);
-			    ctx.closePath();
-			}
-
-		/**
-		 * Demonstrates how to download a canvas an image with a single
-		 * direct click on a link.
-		 */
-		function doCanvas() {
-		    /* draw something */
-		    ctx.fillStyle = '#f90';
-		    ctx.fillRect(0, 0, canvas.width, canvas.height);
-		    ctx.fillStyle = '#fff';
-		    ctx.font = '60px sans-serif';
-		    // ctx.fillText('image doesn t exist :(', 10, canvas.height / 2 - 15);
-		    ctx.font = '26px sans-serif';
-		    // ctx.fillText('Click link below to save this as image', 15, canvas.height / 2 + 35);
-		}
-
-		/**
-		 * This is the function that will take care of image extracting and
-		 * setting proper filename for the download.
-		 * IMPORTANT: Call it from within a onclick event.
-		*/
-		// function downloadCanvas(link, canvasId, filename) {
-		//     link.href = document.getElementById(canvasId).toDataURL();
-		//     link.download = filename;
-		// }
-
-		/**
-		 * The event handler for the link's onclick event. We give THIS as a
-		 * parameter (=the link element), ID of the canvas and a filename.
-		*/
-		mirror.addEventListener('contextmenu',function (e) {
-			var dataURL = canvas.toDataURL('image/png');
-			mirror.src = dataURL;
-		})
-
-		var button = document.getElementById('downloadBtn');
-		button.addEventListener('click', function (e) {
-		    var dataURL = canvas.toDataURL('image/png');
-		    button.href = dataURL;
 		});
 
+		function showAllImages(tipe) {
+			console.log('showAllImages');
+
+			resetForm();
+			$.ajax({
+				url:'anti_ajax.php',
+				data:{
+					'mode':'getImgTemplates',
+					'tipe':tipe
+				},type:'post',
+				dataType:'json',
+				beforeSend:function () {
+					$('#imageOptions').html('<img src="fb_loader.gif" alt="">');
+				},success:function(ret){
+					setTimeout(function(){
+						$('#imageOptions').html('');
+
+						var opt='';
+						if(ret.total==0) opt+='<p>template list is empty</p>';
+						else{
+							console.table(ret.returns.data);
+							$.each(ret.returns.data, function  (id,val) {
+								if (val.param3!=null) {
+									var koords = val.param3.split(",");
+									x = koords[0];
+									y = koords[1];
+								} else {
+									x = y = 0;
+								}
+
+								opt+='<img onclick="imageOptionClick(this);" '
+												+'src="../uploads/'+tipe+'_template/'+val.nama+'" '
+												+'tipe="'+val.param1+'" '
+												+'koordX="'+(x)+'" '
+												+'koordY="'+(y)+'" '
+												+'class="imageOption '+(id==0?'active':'')+'" '
+												+'data-design="0" '
+										+'/>';
+							});
+						}$('#imageOptions').html(opt);
+					}, 700);
+				}, error : function (xhr, status, errorThrown) {
+					$('#imageOptions').html('');
+							alert('error : ['+xhr.status+'] '+errorThrown);
+					}
+			});
+		}
+
+		var canvas= document.getElementById('canvasQ');
+		var context= canvas.getContext('2d');
+		var imgs=[];
+		var imagesOK=0;
+		var imageURLs	= [];
+		// var imgUrl1 = '../uploads/promote_template/SF1.png';
+		// var imgUrl2 = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
+		var imgUrl1 = '';
+		var imgUrl2 = '';
+		var e,tipe,koordx,koordy;
+		// imageURLs.push(imgUrl1);
+		// imageURLs.push(imgUrl2);
+
+		function imageOptionClick(el) {
+			console.log('imageOptionClick');
+			$(".imageOption.active").removeClass("active");
+			$(el).addClass("active");
+
+			e = el;
+			tipe = $(el).attr('tipe'); // frame vs promote
+			src = $(el).attr('src'); // frame vs promote
+			koordx = $(el).attr('koordX'); // 100
+			koordy = $(el).attr('koordY'); // 150
+			// loadCanvas(e,tipe,koordx,koordy);
+			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
+			var templUrl = src ;
+			// var templUrl = '../uploads/'+tipe+'_template/'+;
+			if (tipe=='frame') {
+				imageURLs.push(profUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
+				imageURLs.push(templUrl); // layer 2 (top) -? promote :
+			} else {
+				imageURLs.push(templUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
+				imageURLs.push(profUrl); // layer 2 (top) -? promote :
+			}
+			putObject();
+		}
+
+
+		createCanvas(putObject);
+
+		function putObject() {
+			console.log('putObject');
+			console.log(imgs);
+
+			// context.width = imgs[0].naturalWidth;
+			// context.height = imgs[0].naturalHeight;
+			// canvas.width = e.naturalWidth;
+			// canvas.height = e.naturalHeight;
+			console.log(context.width);
+			console.log(context.height);
+
+			// if (tipex=='promote') {
+			// 	 console.log('promote');
+				 		// context.drawImage(imgs[0],0,0);
+				 // context.drawImage(this,koordx,koordy);
+				 // context.drawImage(this,0,0);
+				 // context.drawImage(this,koordx,koordy);
+				 context.fillText("<?php echo $nama_lengkap;?>", 250, 400);
+				 context.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
+				 context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
+
+				 // context.drawImage(this, 0, 0);//,150,150);
+			// } else {
+			// 		console.log('frame');
+			// 		context.drawImage(this, 0, 0);
+			// 		// context.drawImage(this, 0, 0,150,150);
+			// }
+		}
+
+
+		function createCanvas(putObjectx) {
+			console.log('createCanvas');
+
+		// function loadCanvas(e,tipex,koordx,koordy) {
+			$('#imagePreview').attr('style','display:none');
+
+			context.clearRect(0, 0, canvas.width, canvas.height);
+
+			for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
+				var img = new Image(); // create a new image an push it into the imgs[] array
+				imgs.push(img);
+
+				img.onload = function(){// when this image loads, call this img.onload
+					imagesOK++; // this img loaded, increment the image counter
+					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
+						putObjectx();
+					}
+				};
+				img.onerror=function(){ // notify if there's an error
+					alert("failed load image");
+				}
+				img.src = imageURLs[i]; // set img properties
+			}
+		}
+
+
+
+		function resetForm () {
+			$('#canvasQ').html('');
+			$('#imagePreview').removeAttr('style');
+		}
+
+
+
+
+		// // statis canvas
+		// 	var canvas=document.getElementById("canvasQx");
+		// 	var mirror = document.getElementById('canvasMirror');
+		//
+		// 	var ctx=canvas.getContext("2d");
+		// 	var cw=canvas.width;
+		// 	var ch=canvas.height;
+		//
+		// // put the paths to your images in imageURLs[]
+		// 	var imageURLs	= [];
+		// 		var urlTemplate = '../uploads/promote_template/SF1.png';
+		// 		var urlProfile = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
+		// 		imageURLs.push(urlTemplate);
+		// 		imageURLs.push(urlProfile);
+		//
+		// 	// Do drawImage & fillText
+		// 	function imagesAreNowLoaded(){
+		// 		$('#canvasLoder').attr('style','display:none')
+		// 		// ctx.font="700px sans-serif";
+		// 		// ctx.fillStyle="#333333";
+		// 		ctx.font = "90px Comic Sans MS";
+		// 		ctx.fillStyle = "blue";
+		// 		ctx.textAlign = "center";
+		//
+		// 		wTemplate = imgs[0].naturalWidth;
+		// 		hTemplate = imgs[0].naturalHeight;
+		// 		canvas.width	= mirror.width=wTemplate;
+		// 		canvas.height	= mirror.height=hTemplate;
+		//
+		// 		// roundedImage(10, 10, 120,120, 10);
+		// 		// ctx.clip();
+		// 		ctx.drawImage(imgs[0],0,0);
+		// 		ctx.drawImage(imgs[1],490,330,120,120);
+		// 		ctx.fillText("<?php echo $nama_lengkap;?>", 250, 400);
+		// 		ctx.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
+		// 		ctx.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
+		// 	}
+		//
+		// // the loaded images will be placed in imgs[]
+		// 	var imgs=[];
+		// 	var imagesOK=0;
+		// 	startLoadingAllImages(imagesAreNowLoaded);
+		//
+		// 	function startLoadingAllImages(callback){ // When all images are loaded, run the callback (==imagesAreNowLoaded)
+		// 		for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
+		// 			var img = new Image(); // create a new image an push it into the imgs[] array
+		// 			imgs.push(img);
+		//
+		// 			img.onload = function(){// when this image loads, call this img.onload
+		// 				imagesOK++; // this img loaded, increment the image counter
+		// 				if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
+		// 					callback();
+		// 				}
+		// 			};
+		//
+		// 			img.onerror=function(){ // notify if there's an error
+		// 				alert("failed load image");
+		// 			}
+		// 			img.src = imageURLs[i]; // set img properties
+		// 		}
+		// 	}
+
+		// rounded shape
+			// function roundedImage(x, y, width, height, radius) {
+			//     ctx.beginPath();
+			//     ctx.moveTo(x + radius, y);
+			//     ctx.lineTo(x + width - radius, y);
+			//     ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
+			//     ctx.lineTo(x + width, y + height - radius);
+			//     ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
+			//     ctx.lineTo(x + radius, y + height);
+			//     ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
+			//     ctx.lineTo(x, y + radius);
+			//     ctx.quadraticCurveTo(x, y, x + radius, y);
+			//     ctx.closePath();
+			// }
+
+		//
+		// mirror.addEventListener('contextmenu',function (e) {
+		// 	var dataURL = canvas.toDataURL('image/png');
+		// 	mirror.src = dataURL;
+		// })
+		//
+		// var button = document.getElementById('downloadBtn');
+		// button.addEventListener('click', function (e) {
+		//     var dataURL = canvas.toDataURL('image/png');
+		//     button.href = dataURL;
+		// });
+		//
 		// document.getElementById('downloadBtn').addEventListener('click', function() {
 		//     downloadCanvas(this, 'canvasQ', 'test.png');
 		// 		alert('wkwkwkw');
 		// }, false);
-
-		/**
-		 * Draw something to canvas
-		 */
-		// doCanvas();
-
-	// contoh 1
-		// var canvas = document.getElementById('myCanvas');
-		// var context = canvas.getContext('2d');
-		//
-		// function loadImages(sources,callback) {
-		// 	var images = {};
-		// 	var loadedImages = 0;
-		// 	var numImages = 0;
-		//
-		// 	for (var src in sources) {
-		// 		numImages++;
-		// 	}
-		// 	for (var src in sources){
-		// 		images[src]=new Image();
-		// 		images[src].onload=function(){
-		// 			if (++loadedImages >= numImages) {
-		// 				callback(images);
-		// 			}
-		// 		};
-		// 		images[src].src = sources[src];
-		// 	}
-		// }
-		// var sources = {
-		// 	backgroundx : 'SF1.png',
-		// 	urlProfile : '<?php echo 'https://graph.facebook.com/'.$fbid.'/picture?type=large';?>',
-		// 	// urlProfile : '../poto/299261963814087.jpg',
-		// };
-		// loadImages(sources, function (images) {
-		// 	context.drawImage(images.backgroundx,0,0);
-		// 	context.drawImage(images.urlProfile,415,330);
-		// });
-
-		// contoh 2
-			// var canvas = document.getElementById('canvasKu');
-			// var ctx = canvas.getContext('2d');
-			//
-			// var imgTemplate = new Image();
-			// var imgProfile = new Image();
-			// imgTemplate.src='SF1.png';
-			// imgProfile.src='https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
-			//
-			// imgTemplate.onload = function(){
-			// 	canvas.width = imgTemplate.naturalWidth
-			// 	canvas.height = imgTemplate.naturalHeight
-			// 	ctx.drawImage(imgTemplate, 0, 0);
-			//
-			// 	var fullName = 'bejo sugiantoro';
-			// 	// var fullName = 'bejo sugiantoro';
-			// 	ctx.font = '30px sans-serif';
-			// 	ctx.fillText( fullName, canvas.width - (fullName.length * 15), canvas.height - 30 );
-			// 	// ctx.fillText( 'test bos', canvas.width - (txt.length * 15), canvas.height - 30 );
-			// 	// ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-			// 	// ctx.fillText( txt, canvas.width - (txt.length * 15) - 2, canvas.height - 32 )
-			// }
-			//
-			// imgProfile.onload = function(){
-			// 	canvas.width = imgProfile.naturalWidth
-			// 	canvas.height = imgProfile.naturalHeight
-			// 	ctx.drawImage(imgProfile, 30, 20);
-			// }
-			// img.src='https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
-			// img.src = 'https://s3-us-west-2.amazonaws.com/s.cdpn.io/130527/yellow-flower.jpg';
-
-
-		// var canvas = document.getElementById('myCanvas');
-    // var context = canvas.getContext('2d');
-		//
-    // var darthVader= 'http://www.html5canvastutorials.com/demos/assets/darth-vader.jpg';
-    // var  yoda= 'http://www.html5canvastutorials.com/demos/assets/yoda.jpg';
-		//
-    // loadImages(sources, function(images) {
-    //   context.drawImage(darthVader, 100, 30, 200, 137);
-    //   context.drawImage(yoda, 350, 55, 93, 104);
-    // });
 
 		var tour = new Tour({
 			backdrop:true,
@@ -626,40 +628,8 @@ if(isset($_POST['claim'])){
 
 			}]
 		});
-		// Initialize the tour
-		tour.init();
-		// Start the tour
-		tour.start();
-
-		// (() => {
-		// 	const mergeImage = ( id, imgsrc, txt, fbprof ) => {
-		// 		const canvas = document.getElementById( id );
-		//
-		// 		if ( canvas.getContext ) {
-		// 			const ctx = canvas.getContext( '2d' );
-		// 			let img = new Image();
-		// 			img.src = imgsrc;
-		// 			img.onload = function () {
-		// 				let imgWidth = img.width;
-		// 				let imgHeight = img.height;
-		// 				canvas.width = imgWidth;
-		// 				canvas.height = imgHeight;
-		//
-		// 				ctx.drawImage( img, 0, 0 );
-		// 				ctx.fillStyle = 'rgba(0, 0, 0, 0.25)';
-		//
-		// 				ctx.font = '30px sans-serif';
-		// 				ctx.fillText( txt, canvas.width - (txt.length * 15), canvas.height - 30 );
-		// 				ctx.fillStyle = 'rgba(255, 255, 255, 0.25)';
-		// 				ctx.fillText( txt, canvas.width - (txt.length * 15) - 2, canvas.height - 32 )
-		// 			}
-		// 		}
-		// 	}
-		// 	mergeImage( 'mergedImageDisp', 'SF1.png', '<?php echo $nama_lengkap;?>', '<?php echo $nama_lengkap;?>');
-		// 	// mergeImage( 'mergedImageDisp', 'SF1.png', 'ini nyoba bos' );
-		// 	// mergeImage( 'canvas', '/staticImages/y.jpg', 'htmlstack.com' );
-		// })()
-		//
+		tour.init();	// Initialize the tour
+		tour.start();	// Start the tour
 	</script>
 
 	<script src="../home/js/jquery-1.10.2.js" type="text/javascript"></script>

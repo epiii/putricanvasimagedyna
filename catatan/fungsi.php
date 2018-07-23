@@ -1,5 +1,21 @@
 <?php
 
+// debug variable
+	function pr($var){
+		echo "<pre>";
+			print_r($var);
+		echo"</pre>";
+		exit();
+	}
+
+// debug variable
+	function vd($var){
+		echo "<pre>";
+			var_dump($var);
+		echo"</pre>";
+		exit();
+	}
+
 //VALIDASI
 function cek($con,$db,$idfb){
 
@@ -110,9 +126,13 @@ function tagihan($con,$db,$usr,$halaman,$batas,$th1,$th2){
 	return $hsl.$halm;
 	//return $q;
 }
+
 function kunjungan($con,$db){
-	$Qry2 = mysqli_query($con,"select count(nominal) from pengguna where date(tgl_lunas)=date(now())");
-	$data2 = mysqli_fetch_row($Qry2);
+	$s 			= "select count(nominal) from pengguna where date(tgl_lunas)=date(now())";
+	$Qry2 	= mysqli_query($con,$s);
+	$data2 	= mysqli_fetch_row($Qry2);
+	// print_r($data2);
+	// exit();
 	$hsl = $hsl.'
 		<div class="row">
 			<div class="col-lg-12 col-xs-12">
@@ -196,11 +216,11 @@ function pembayaran($con,$db,$usr,$th1,$th2,$k_2th,$k_1th,$k_6bln){
 			FROM `upgrade`
 			WHERE (`referal` ='$usr' AND `tgl_lunas` IS NOT NULL AND `basil_dibayar` = 'audit')
 				OR (`referal` ='$usr' AND `tgl_lunas` IS NOT NULL AND `basil_dibayar` is null)");
-	while($up = mysqli_fetch_array($q_u)){
-		$k_up = $up['bagi_hasil'];
-		$denom_k = $k_up/1000;
-		$komisi_n = $komisi_n + $k_up;
-		$hsl = $hsl.'
+		while($up = mysqli_fetch_array($q_u)){
+			$k_up = $up['bagi_hasil'];
+			$denom_k = $k_up/1000;
+			$komisi_n = $komisi_n + $k_up;
+			$hsl = $hsl.'
 								<li>
                                     <div class="row">
                                         <div class="col-md-2 col-md-offset-1 col-xs-5 col-xs-offset-1">
@@ -352,4 +372,23 @@ function getUserByFbId($conn,$fbid){
 		}
 	}
 }
+
+function isFbProfileExist($conn,$fbid){
+	if (!isset($conn) && !isset($fbid)) {
+		return 'invalid parameter or undefined paramater isFbProfileExist';
+	} else {
+		$s = 'SELECT * FROM pengguna WHERE id_fb='.$fbid;
+		$e = mysqli_query($conn,$s);
+		$n = mysqli_num_rows($e);
+		// vd($n);
+		if($n<=0){
+			return 'FB ID is not found';
+		} else {
+			$r=mysqli_fetch_assoc($e);
+			return is_null($r['img_profile'])?'new user':'old user';
+		}
+		// return true;
+	}
+}
+
 ?>
