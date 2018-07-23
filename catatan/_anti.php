@@ -238,10 +238,7 @@ if(isset($_POST['claim'])){
 	                <div class="container">
                     <?php echo $pencairan;?>
 										<div class="row">
-
-											<!-- panel : left -->
 											<div class="col-md-6 col-xs-12 text-center" >
-												<!-- profile pict. -->
 												<div class="info info-horizontal" id="panel1">
 													<div class="icon">
 														<img src="<?php echo 'https://graph.facebook.com/'.$fbid.'/picture?type=large'; ?>">
@@ -252,7 +249,6 @@ if(isset($_POST['claim'])){
 													</div>
 												</div>
 
-												<!-- user -->
 												<h6 class="text-muted">Followup Mitra</h6>
 												<div class="progress">
 												  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
@@ -260,60 +256,47 @@ if(isset($_POST['claim'])){
 												  </div>
 												</div>
                         <ul class="list-unstyled follows">
+													<!-- nah -->
 													<?php echo $data_pgg;?>
                         </ul>
                         <div class="text-missing">
                             <h5 class="text-muted">Mari pantau gerakan digital marketing downline kita melalui facebook. Berteman dengan mereka dengan klik tombol facebook </h5>
                         </div>
-                      </div> <!-- end of :: panel : left -->
+                      </div>
 
-											<!-- panel : right -->
+										<!-- image (profile & promote) -->
 											<div id="imageDiv" class="col-md-6 col-xs-12 text-center">
 												<form id="image-form" enctype="multipart/form-data">
-													<label>Promote Picture</label>
+													<!-- tipe -->
+													<div class="form-group">
+									          <label>Mode</label>
+														<select onchange="showAllImages(this.value);"  class="form-control" name="tipe" id="mode">
+															<option value="">-Select Mode-</option>
+															<option value="frame">Frame</option>
+															<option value="promote">Promote</option>
+														</select>
+									        </div>
 
 													<!-- preview options -->
-									        <div id="imageOptions" class="form-group">
-														<?php
-															$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
-															$exe = mysqli_query($con,$sql);
-															$i=0;
-															while ($res=mysqli_fetch_assoc($exe)) {
-																$koord = explode(',',trim($res['param3'],' '));
-																$x= $koord[0];
-																$y= $koord[1];
-																$w= $koord[2];
-																$h= $koord[3];
-																// pr($x);
-																	echo'<img onclick="promoteOptionClick(this);"
-																		src="../uploads/promote_template/'.$res['nama'].'"
-																		tipe="'.$res['param1'].'"
-																		koordX="'.$x.'"
-																		koordY="'.$y.'"
-																		imgW="'.$w.'"
-																		imgH="'.$h.'"
-																		class="imageOption '.($i==0?'active':'').'"
-																		data-design="0"
-																	/>';
-																	$i++;
-															}
-														 ?>
-									        </div>
+									        <div id="imageOptions" class="form-group"></div>
 
 													<!-- preview result image -->
 													<div class="form-group">
-														<div>
-															<img id="imagePreview" width="250" src="../uploads/no_preview.png" alt="" />
-														</div>
-
-														<div>
-															<canvas id="promoteCanvas"></canvas>
-														</div>
+														<img id="imagePreview" width="250" src="../uploads/no_preview.png" alt="" />
+														<canvas id="canvasQ">
+														</canvas>
 									        </div>
 
+													<!-- <input type="hidden" id="tempImagePreview"> -->
 									        <button  class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
-									      </form><!-- end of : promote FORM -->
-											</div> <!-- end of :: panel : left -->
+									      </form>
+
+												<!-- <img id="canvasLoder" src="fb_loader.gif" alt=""> -->
+												<!-- <canvas id="canvasQ" xwidth="630" xheight="840"></canvas> -->
+												<!-- <img id="canvasMirror">
+												<a href="#" download="nama_file_ku.png" id="downloadBtn" class="btn btn-info"><i class="fa fa-download"></i> Download</a> -->
+											</div>
+										<!-- end of : image (profile & promote) -->
 
 	                </div>
 		            </div>
@@ -368,8 +351,7 @@ if(isset($_POST['claim'])){
 		$(document).ready(function(){
 
 		});
-
-		var canvas= document.getElementById('promoteCanvas');
+		var canvas= document.getElementById('canvasQ');
 		var context= canvas.getContext('2d');
 		var imgs=[];
 		var imagesOK=0;
@@ -382,9 +364,56 @@ if(isset($_POST['claim'])){
 		// imageURLs.push(imgUrl1);
 		// imageURLs.push(imgUrl2);
 
-		function promoteOptionClick(el) {
-			imageURLs=[];
-			console.log('promoteOptionClick');
+		function showAllImages(tipe) {
+			console.log('showAllImages');
+
+			resetForm();
+			$.ajax({
+				url:'anti_ajax.php',
+				data:{
+					'mode':'getImgTemplates',
+					'tipe':tipe
+				},type:'post',
+				dataType:'json',
+				beforeSend:function () {
+					$('#imageOptions').html('<img src="fb_loader.gif" alt="">');
+				},success:function(ret){
+					setTimeout(function(){
+						$('#imageOptions').html('');
+
+						var opt='';
+						if(ret.total==0) opt+='<p>template list is empty</p>';
+						else{
+							console.table(ret.returns.data);
+							$.each(ret.returns.data, function  (id,val) {
+								if (val.param3!=null) {
+									var koords = val.param3.split(",");
+									x = koords[0];
+									y = koords[1];
+								} else {
+									x = y = 0;
+								}
+
+								opt+='<img onclick="imageOptionClick(this);" '
+												+'src="../uploads/'+tipe+'_template/'+val.nama+'" '
+												+'tipe="'+val.param1+'" '
+												+'koordX="'+(x)+'" '
+												+'koordY="'+(y)+'" '
+												+'class="imageOption '+(id==0?'active':'')+'" '
+												+'data-design="0" '
+										+'/>';
+							});
+						}$('#imageOptions').html(opt);
+					}, 700);
+				}, error : function (xhr, status, errorThrown) {
+					$('#imageOptions').html('');
+							alert('error : ['+xhr.status+'] '+errorThrown);
+					}
+			});
+		}
+
+		function imageOptionClick(el) {
+			console.log('imageOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
 
@@ -397,8 +426,13 @@ if(isset($_POST['claim'])){
 			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
 			var templUrl = src ;
 			// var templUrl = '../uploads/'+tipe+'_template/'+;
-			imageURLs.push(templUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
-			imageURLs.push(profUrl); // layer 2 (top) -? promote :
+			if (tipe=='frame') {
+				imageURLs.push(profUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
+				imageURLs.push(templUrl); // layer 2 (top) -? promote :
+			} else {
+				imageURLs.push(templUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
+				imageURLs.push(profUrl); // layer 2 (top) -? promote :
+			}
 			loadImage(objectProperty);
 		}
 
@@ -408,14 +442,13 @@ if(isset($_POST['claim'])){
 
 			canvas.width = imgs[0].naturalWidth;
 			canvas.height = imgs[0].naturalHeight;
-			// console.log(imgs[0]);
-			// console.log(imgs[1]);
-
-			// console.log('cw='+canvas.width);
-			// console.log('ch='+canvas.height);
+			console.log(imgs[0]);
+			console.log(imgs[1]);
+			console.log(context.width);
+			console.log(context.height);
 
 		 context.drawImage(imgs[0],0,0);
-		 context.drawImage(imgs[1],490,330,120,120);
+		 context.drawImage(imgs[1],10,10);
 		 // context.drawImage(this,0,0);
 
 		 // context.drawImage(this,koordx,koordy);
@@ -431,25 +464,24 @@ if(isset($_POST['claim'])){
 				console.log(imgs);
 				console.log(imageURLs);
 			imgs=[];
-			// imageURLs=[];
-			//
 			console.log('-- setelah hapus ');
 				console.log(imgs);
 				console.log(imageURLs);
+			// console.log(imageURLs);
+			// console.log(imgs.length);
 
+		// function loadCanvas(e,tipex,koordx,koordy) {
 			$('#imagePreview').attr('style','display:none');
+
 			// context.clearRect(0, 0, canvas.width, canvas.height);
 
-			console.log(imageURLs.length);
 			for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
 				var img = new Image(); // create a new image an push it into the imgs[] array
 				imgs.push(img);
 
 				img.onload = function(){// when this image loads, call this img.onload
 					imagesOK++; // this img loaded, increment the image counter
-					// console.log('onload');
 					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
-						// console.log('onload 2');
 						objectPropertyx();
 					}
 				};
@@ -461,7 +493,7 @@ if(isset($_POST['claim'])){
 		}
 
 		function resetForm () {
-			$('#promoteCanvas').html('');
+			$('#canvasQ').html('');
 			$('#imagePreview').removeAttr('style');
 
 			imgs=[];
@@ -477,7 +509,7 @@ if(isset($_POST['claim'])){
 
 
 		// // statis canvas
-		// 	var canvas=document.getElementById("promoteCanvasQ");
+		// 	var canvas=document.getElementById("canvasQx");
 		// 	var mirror = document.getElementById('canvasMirror');
 		//
 		// 	var ctx=canvas.getContext("2d");
@@ -566,7 +598,7 @@ if(isset($_POST['claim'])){
 		// });
 		//
 		// document.getElementById('downloadBtn').addEventListener('click', function() {
-		//     downloadCanvas(this, 'promoteCanvas', 'test.png');
+		//     downloadCanvas(this, 'canvasQ', 'test.png');
 		// 		alert('wkwkwkw');
 		// }, false);
 
