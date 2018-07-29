@@ -194,16 +194,44 @@ if(isset($_POST['claim'])){
 			.imageOption{
 				height: 150px;
 				border: 5px dashed #CCC;
+				/* border: 5px dashed #CCC; */
 				cursor: pointer;
+				opacity: .5;
 			}
 			.imageOption.active{
-				border: 5px dashed #000;
+				border: 5px solid orange;
+				/* border: 5px dashed #000; */
+				opacity: 1;
+			}
+			.imageOption:hover {
+				opacity: 1;
 			}
 
+
+			/* .container .btn { */
+			.divCanvas .downloadBtn {
+			  position: absolute;
+			  top: 50%;
+			  left: 50%;
+			  transform: translate(-50%, -50%);
+			  -ms-transform: translate(-50%, -50%);
+			  background-color: #555;
+			  color: white;
+			  font-size: 16px;
+			  padding: 12px 24px;
+			  border: none;
+			  cursor: pointer;
+			  border-radius: 5px;
+				opacity: 0.5;
+			}
+			.downloadBtn:hover {
+				opacity: 1;
+			}
 		</style>
 	</head>
+
 	<body class="search">
-	<?php echo $notif_cl; ?>
+		<?php echo $notif_cl; ?>
 		<noscript>
 			<iframe src="https://www.googletagmanager.com/ns.html?id=GTM-WV7W67N" height="0" width="0" style="display:none;visibility:hidden"></iframe>
 		</noscript>
@@ -269,50 +297,110 @@ if(isset($_POST['claim'])){
 
 											<!-- panel : right -->
 											<div id="imageDiv" class="col-md-6 col-xs-12 text-center">
-												<form id="image-form" enctype="multipart/form-data">
-													<label>Promote Picture</label>
-
-													<!-- preview options -->
-									        <div id="imageOptions" class="form-group">
-														<?php
-															$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
-															$exe = mysqli_query($con,$sql);
-															$i=0;
-															while ($res=mysqli_fetch_assoc($exe)) {
-																$koord = explode(',',trim($res['param3'],' '));
-																$x= $koord[0];
-																$y= $koord[1];
-																$w= $koord[2];
-																$h= $koord[3];
-																// pr($x);
-																	echo'<img onclick="promoteOptionClick(this);"
-																		src="../uploads/promote_template/'.$res['nama'].'"
-																		tipe="'.$res['param1'].'"
-																		koordX="'.$x.'"
-																		koordY="'.$y.'"
-																		imgW="'.$w.'"
-																		imgH="'.$h.'"
-																		class="imageOption '.($i==0?'active':'').'"
-																		data-design="0"
-																	/>';
-																	$i++;
-															}
-														 ?>
-									        </div>
 
 													<!-- preview result image -->
-													<div class="form-group">
-														<div>
-															<img id="imagePreview" width="250" src="../uploads/no_preview.png" alt="" />
-														</div>
+													<div id="exTab1" class="containerx">
+														<ul  class="nav nav-pills">
+															<li class="active"> <a  href="#1a" data-toggle="tab">Promote</a></li>
+															<li><a href="#2a" data-toggle="tab">Profile</a></li>
+														</ul>
 
-														<div>
-															<canvas id="promoteCanvas"></canvas>
-														</div>
-									        </div>
+														<div class="tab-content xclearfix">
 
-									        <button  class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
-									      </form><!-- end of : promote FORM -->
+															<!-- promote content -->
+														  <div class="tab-pane active" id="1a">
+																<form id="image-form" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
+																	<label>Promote Picture</label>
+
+																	<!-- preview options -->
+																	<div id="imageOptions" class="form-group">
+																		<?php
+																			$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
+																			$exe = mysqli_query($con,$sql);
+																			$i=0;
+																			while ($res=mysqli_fetch_assoc($exe)) {
+																				$param3s = explode(',',trim($res['param3'],' '));
+																				$x= $param3s[0];
+																				$y= $param3s[1];
+																				$w= $param3s[2];
+																				$h= $param3s[3];
+																				$xx= $param3s[4];
+																				$yy= $param3s[5];
+																				// pr($x);
+																					echo'<img onclick="promoteOptionClick(this);"
+																						src="../uploads/promote_template/'.$res['nama'].'"
+																						tipe="'.$res['param1'].'"
+																						profileX="'.$x.'"
+																						profileY="'.$y.'"
+																						profileW="'.$w.'"
+																						profileH="'.$h.'"
+																						textX="'.$xx.'"
+																						textY="'.$yy.'"
+																						class="imageOption"
+																						data-design="0"
+																					/>';
+																					// class="imageOption '.($i==0?'active':'').'"
+																					$i++;
+																			}
+																		 ?>
+																	</div>
+
+																	<div class="form-group">
+																		<div>
+																			<img id="promotePreview" width="250" src="../uploads/no_preview.png" alt="" />
+																		</div>
+
+																		<div class="divCanvas">
+																			<a id="promoteDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
+																			<canvas id="promoteCanvas"></canvas>
+																		</div>
+																	</div>
+
+																	<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+																</form><!-- end of : promote FORM -->
+															</div>
+
+															<!-- profile content -->
+															<div class="tab-pane" id="2a">
+																<form id="image-form" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
+																	<label>Promote Picture</label>
+
+																	<!-- preview options -->
+																	<div id="imageOptions" class="form-group">
+																		<?php
+																			$sql2 = 'SELECT * FROM parameter WHERE param1 = "frame" ORDER BY nama ASC';
+																			$exe2 = mysqli_query($con,$sql2);
+																			$i=0;
+																			while ($res2=mysqli_fetch_assoc($exe2)) {
+																					echo'<img onclick="frameOptionClick(this);"
+																						src="../uploads/frame_template/'.$res['nama'].'"
+																						class="imageOption"
+																						data-design="0"
+																					/>';
+																					$i++;
+																			}
+																		 ?>
+																	</div>
+
+																	<div class="form-group">
+																		<div>
+																			<img id="framePreview" width="250" src="../uploads/no_preview.png" alt="" />
+																		</div>
+
+																		<div class="divCanvas">
+																			<a id="frameDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
+																			<canvas id="frameCanvas"></canvas>
+																		</div>
+																	</div>
+
+																	<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+																</form><!-- end of : promote FORM -->
+															</div>
+
+														</div>
+												  </div>
+
+
 											</div> <!-- end of :: panel : left -->
 
 	                </div>
@@ -366,7 +454,7 @@ if(isset($_POST['claim'])){
 
 	<script>
 		$(document).ready(function(){
-
+			console.log('ready');
 		});
 
 		var canvas= document.getElementById('promoteCanvas');
@@ -374,70 +462,80 @@ if(isset($_POST['claim'])){
 		var imgs=[];
 		var imagesOK=0;
 		var imageURLs	= [];
-		// var imgUrl1 = '../uploads/promote_template/SF1.png';
-		// var imgUrl2 = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
+
 		var imgUrl1 = '';
 		var imgUrl2 = '';
-		var e,tipe,koordx,koordy;
-		// imageURLs.push(imgUrl1);
-		// imageURLs.push(imgUrl2);
+		var e,tipe,profile_x,profile_y,text_x,text_y;
+		var objProp=[];
+
+		function downloadCanvas(link, canvasId, filename) {
+		    link.href = document.getElementById(canvasId).toDataURL();
+		    link.download = filename;
+		}
+		document.getElementById('promoteDownload').addEventListener('click', function() {
+		    downloadCanvas(this, 'promoteCanvas',  '<?php echo $fbid ?>.png');
+		}, false);
 
 		function promoteOptionClick(el) {
 			imageURLs=[];
+			objProp=[];
 			console.log('promoteOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
 
 			e = el;
-			tipe = $(el).attr('tipe'); // frame vs promote
-			src = $(el).attr('src'); // frame vs promote
-			koordx = $(el).attr('koordX'); // 100
-			koordy = $(el).attr('koordY'); // 150
-			// loadCanvas(e,tipe,koordx,koordy);
+			src = $(el).attr('src');
+			profile_x = $(el).attr('profileX');
+			profile_y	= $(el).attr('profileY');
+			profile_w = $(el).attr('profileW');
+			profile_h = $(el).attr('profileH');
+			text_x = $(el).attr('textX');
+			text_y = $(el).attr('textY');
+			objProp.push(profile_x);
+			objProp.push(profile_y);
+			objProp.push(profile_w);
+			objProp.push(profile_h);
+			objProp.push(text_x);
+			objProp.push(text_y);
+
 			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
 			var templUrl = src ;
-			// var templUrl = '../uploads/'+tipe+'_template/'+;
-			imageURLs.push(templUrl); // layer 1 (bottom) -> frame (profil fb) vs koord
-			imageURLs.push(profUrl); // layer 2 (top) -? promote :
-			loadImage(objectProperty);
+			imageURLs.push(templUrl); // layer 1 (bottom) : promote
+			imageURLs.push(profUrl); // layer 2 (top) : profile
+			loadImage(promoteObjProp);
+			// $('#promoteDownload').removeAttr('style');
 		}
 
-
-		function objectProperty() {
-			console.log('objectProperty');
-
+		function promoteObjProp() {
+			console.log('promoteObjProp');
+			console.log(objProp);
 			canvas.width = imgs[0].naturalWidth;
 			canvas.height = imgs[0].naturalHeight;
-			// console.log(imgs[0]);
-			// console.log(imgs[1]);
 
-			// console.log('cw='+canvas.width);
-			// console.log('ch='+canvas.height);
-
-		 context.drawImage(imgs[0],0,0);
-		 context.drawImage(imgs[1],490,330,120,120);
-		 // context.drawImage(this,0,0);
-
-		 // context.drawImage(this,koordx,koordy);
-		 context.fillText("<?php echo $nama_lengkap;?>", 250, 400);
-		 context.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
-		 context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
+		 	var imgX = objProp[0];
+		 	var imgY = objProp[1];
+		 	var imgW = objProp[2];
+		 	var imgH = objProp[3];
+		 	var txtX = objProp[4];
+		 	var txtY = objProp[5];
+			context.drawImage(imgs[0],0,0);
+			context.drawImage(imgs[1],imgX,imgY,imgW,imgH);
+			context.fillText("<?php echo $nama_lengkap;?>", txtX, txtY); // 400
+			context.fillText("<?php echo $userByFbId['no_wa'];?>", txtX,parseFloat(txtY)+20); // 420
+			context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", txtX,parseFloat(txtY)+40); //440
 		}
 
-
-		function loadImage(objectPropertyx) {
+		function loadImage(promoteObjPropx) {
 			console.log('loadImage');
 			console.log('-- sebelum hapus ');
 				console.log(imgs);
 				console.log(imageURLs);
 			imgs=[];
-			// imageURLs=[];
-			//
 			console.log('-- setelah hapus ');
 				console.log(imgs);
 				console.log(imageURLs);
 
-			$('#imagePreview').attr('style','display:none');
+			$('#promotePreview').attr('style','display:none');
 			// context.clearRect(0, 0, canvas.width, canvas.height);
 
 			console.log(imageURLs.length);
@@ -445,130 +543,157 @@ if(isset($_POST['claim'])){
 				var img = new Image(); // create a new image an push it into the imgs[] array
 				imgs.push(img);
 
+				img.crossOrigin = "anonymous";
 				img.onload = function(){// when this image loads, call this img.onload
 					imagesOK++; // this img loaded, increment the image counter
-					// console.log('onload');
 					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
-						// console.log('onload 2');
-						objectPropertyx();
+						promoteObjPropx();
+						$('#promoteDownload').removeAttr('style');
 					}
 				};
+
 				img.onerror=function(){ // notify if there's an error
-					alert("failed load image");
+					alert("failed load profile");
 				}
+
 				img.src = imageURLs[i]; // set img properties
 			}
 		}
 
 		function resetForm () {
 			$('#promoteCanvas').html('');
-			$('#imagePreview').removeAttr('style');
+			$('#promotePreview').removeAttr('style');
 
 			imgs=[];
 			imagesOK=0;
 			imageURLs	= [];
 			imgUrl1 = '';
 			imgUrl2 = '';
-			e,tipe='',koordx='',koordy='';
+			e,tipe='',profile_x='',profile_y='';
+			objProp=[];
+		}
+
+		function promoteSave() {
 
 		}
 
+	// -- profile frame
+		var canvas= document.getElementById('frameCanvas');
+		var context= canvas.getContext('2d');
+		var imgs=[];
+		var imagesOK=0;
+		var imageURLs	= [];
 
+		var imgUrl1 = '';
+		var imgUrl2 = '';
+		var e,tipe,profile_x,profile_y,text_x,text_y;
+		var objProp=[];
 
+		function downloadCanvas(link, canvasId, filename) {
+				link.href = document.getElementById(canvasId).toDataURL();
+				link.download = filename;
+		}
+		document.getElementById('promoteDownload').addEventListener('click', function() {
+				downloadCanvas(this, 'promoteCanvas',  '<?php echo $fbid ?>.png');
+		}, false);
 
-		// // statis canvas
-		// 	var canvas=document.getElementById("promoteCanvasQ");
-		// 	var mirror = document.getElementById('canvasMirror');
-		//
-		// 	var ctx=canvas.getContext("2d");
-		// 	var cw=canvas.width;
-		// 	var ch=canvas.height;
-		//
-		// // put the paths to your images in imageURLs[]
-		// 	var imageURLs	= [];
-		// 		var urlTemplate = '../uploads/promote_template/SF1.png';
-		// 		var urlProfile = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
-		// 		imageURLs.push(urlTemplate);
-		// 		imageURLs.push(urlProfile);
-		//
-		// 	// Do drawImage & fillText
-		// 	function imagesAreNowLoaded(){
-		// 		$('#canvasLoder').attr('style','display:none')
-		// 		// ctx.font="700px sans-serif";
-		// 		// ctx.fillStyle="#333333";
-		// 		ctx.font = "90px Comic Sans MS";
-		// 		ctx.fillStyle = "blue";
-		// 		ctx.textAlign = "center";
-		//
-		// 		wTemplate = imgs[0].naturalWidth;
-		// 		hTemplate = imgs[0].naturalHeight;
-		// 		canvas.width	= mirror.width=wTemplate;
-		// 		canvas.height	= mirror.height=hTemplate;
-		//
-		// 		// roundedImage(10, 10, 120,120, 10);
-		// 		// ctx.clip();
-		// 		ctx.drawImage(imgs[0],0,0);
-		// 		ctx.drawImage(imgs[1],490,330,120,120);
-		// 		ctx.fillText("<?php echo $nama_lengkap;?>", 250, 400);
-		// 		ctx.fillText("<?php echo $userByFbId['no_wa'];?>", 250,420);
-		// 		ctx.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", 250,440);
-		// 	}
-		//
-		// // the loaded images will be placed in imgs[]
-		// 	var imgs=[];
-		// 	var imagesOK=0;
-		// 	startLoadingAllImages(imagesAreNowLoaded);
-		//
-		// 	function startLoadingAllImages(callback){ // When all images are loaded, run the callback (==imagesAreNowLoaded)
-		// 		for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
-		// 			var img = new Image(); // create a new image an push it into the imgs[] array
-		// 			imgs.push(img);
-		//
-		// 			img.onload = function(){// when this image loads, call this img.onload
-		// 				imagesOK++; // this img loaded, increment the image counter
-		// 				if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
-		// 					callback();
-		// 				}
-		// 			};
-		//
-		// 			img.onerror=function(){ // notify if there's an error
-		// 				alert("failed load image");
-		// 			}
-		// 			img.src = imageURLs[i]; // set img properties
-		// 		}
-		// 	}
+		function promoteOptionClick(el) {
+			imageURLs=[];
+			objProp=[];
+			console.log('promoteOptionClick');
+			$(".imageOption.active").removeClass("active");
+			$(el).addClass("active");
 
-		// rounded shape
-			// function roundedImage(x, y, width, height, radius) {
-			//     ctx.beginPath();
-			//     ctx.moveTo(x + radius, y);
-			//     ctx.lineTo(x + width - radius, y);
-			//     ctx.quadraticCurveTo(x + width, y, x + width, y + radius);
-			//     ctx.lineTo(x + width, y + height - radius);
-			//     ctx.quadraticCurveTo(x + width, y + height, x + width - radius, y + height);
-			//     ctx.lineTo(x + radius, y + height);
-			//     ctx.quadraticCurveTo(x, y + height, x, y + height - radius);
-			//     ctx.lineTo(x, y + radius);
-			//     ctx.quadraticCurveTo(x, y, x + radius, y);
-			//     ctx.closePath();
-			// }
+			e = el;
+			src = $(el).attr('src');
+			profile_x = $(el).attr('profileX');
+			profile_y	= $(el).attr('profileY');
+			profile_w = $(el).attr('profileW');
+			profile_h = $(el).attr('profileH');
+			text_x = $(el).attr('textX');
+			text_y = $(el).attr('textY');
+			objProp.push(profile_x);
+			objProp.push(profile_y);
+			objProp.push(profile_w);
+			objProp.push(profile_h);
+			objProp.push(text_x);
+			objProp.push(text_y);
 
-		//
-		// mirror.addEventListener('contextmenu',function (e) {
-		// 	var dataURL = canvas.toDataURL('image/png');
-		// 	mirror.src = dataURL;
-		// })
-		//
-		// var button = document.getElementById('downloadBtn');
-		// button.addEventListener('click', function (e) {
-		//     var dataURL = canvas.toDataURL('image/png');
-		//     button.href = dataURL;
-		// });
-		//
-		// document.getElementById('downloadBtn').addEventListener('click', function() {
-		//     downloadCanvas(this, 'promoteCanvas', 'test.png');
-		// 		alert('wkwkwkw');
-		// }, false);
+			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
+			var templUrl = src ;
+			imageURLs.push(templUrl); // layer 1 (bottom) : promote
+			imageURLs.push(profUrl); // layer 2 (top) : profile
+			loadImage(promoteObjProp);
+			// $('#promoteDownload').removeAttr('style');
+		}
+
+		function promoteObjProp() {
+			console.log('promoteObjProp');
+			console.log(objProp);
+			canvas.width = imgs[0].naturalWidth;
+			canvas.height = imgs[0].naturalHeight;
+
+			var imgX = objProp[0];
+			var imgY = objProp[1];
+			var imgW = objProp[2];
+			var imgH = objProp[3];
+			var txtX = objProp[4];
+			var txtY = objProp[5];
+			context.drawImage(imgs[0],0,0);
+			context.drawImage(imgs[1],imgX,imgY,imgW,imgH);
+			context.fillText("<?php echo $nama_lengkap;?>", txtX, txtY); // 400
+			context.fillText("<?php echo $userByFbId['no_wa'];?>", txtX,parseFloat(txtY)+20); // 420
+			context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", txtX,parseFloat(txtY)+40); //440
+		}
+
+		function loadImage(promoteObjPropx) {
+			console.log('loadImage');
+			console.log('-- sebelum hapus ');
+				console.log(imgs);
+				console.log(imageURLs);
+			imgs=[];
+			console.log('-- setelah hapus ');
+				console.log(imgs);
+				console.log(imageURLs);
+
+			$('#promotePreview').attr('style','display:none');
+			// context.clearRect(0, 0, canvas.width, canvas.height);
+
+			console.log(imageURLs.length);
+			for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
+				var img = new Image(); // create a new image an push it into the imgs[] array
+				imgs.push(img);
+
+				img.crossOrigin = "anonymous";
+				img.onload = function(){// when this image loads, call this img.onload
+					imagesOK++; // this img loaded, increment the image counter
+					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
+						promoteObjPropx();
+						$('#promoteDownload').removeAttr('style');
+					}
+				};
+
+				img.onerror=function(){ // notify if there's an error
+					alert("failed load profile");
+				}
+
+				img.src = imageURLs[i]; // set img properties
+			}
+		}
+
+		function resetForm () {
+			$('#promoteCanvas').html('');
+			$('#promotePreview').removeAttr('style');
+
+			imgs=[];
+			imagesOK=0;
+			imageURLs	= [];
+			imgUrl1 = '';
+			imgUrl2 = '';
+			e,tipe='',profile_x='',profile_y='';
+			objProp=[];
+		}
+
 
 		var tour = new Tour({
 			backdrop:true,
