@@ -362,7 +362,7 @@ if(isset($_POST['claim'])){
 
 															<!-- profile content -->
 															<div class="tab-pane" id="2a">
-																<form id="image-form" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
+																<form id="image-form" onsubmit="frameSave();return false;" enctype="multipart/form-data">
 																	<label>Promote Picture</label>
 
 																	<!-- preview options -->
@@ -370,14 +370,15 @@ if(isset($_POST['claim'])){
 																		<?php
 																			$sql2 = 'SELECT * FROM parameter WHERE param1 = "frame" ORDER BY nama ASC';
 																			$exe2 = mysqli_query($con,$sql2);
-																			$i=0;
+																			// pr($exe2);
+																			$i2=0;
 																			while ($res2=mysqli_fetch_assoc($exe2)) {
 																					echo'<img onclick="frameOptionClick(this);"
-																						src="../uploads/frame_template/'.$res['nama'].'"
+																						src="../uploads/frame_template/'.$res2['nama'].'"
 																						class="imageOption"
 																						data-design="0"
 																					/>';
-																					$i++;
+																					$i2++;
 																			}
 																		 ?>
 																	</div>
@@ -393,7 +394,7 @@ if(isset($_POST['claim'])){
 																		</div>
 																	</div>
 
-																	<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+																	<button class="btn btn-primary" type="submit" name="submit" xid="image-submit">Save</button>
 																</form><!-- end of : promote FORM -->
 															</div>
 
@@ -456,97 +457,97 @@ if(isset($_POST['claim'])){
 		$(document).ready(function(){
 			console.log('ready');
 		});
-
-		var canvas= document.getElementById('promoteCanvas');
-		var context= canvas.getContext('2d');
-		var imgs=[];
-		var imagesOK=0;
-		var imageURLs	= [];
-
-		var imgUrl1 = '';
-		var imgUrl2 = '';
-		var e,tipe,profile_x,profile_y,text_x,text_y;
-		var objProp=[];
-
+// ---------
 		function downloadCanvas(link, canvasId, filename) {
 		    link.href = document.getElementById(canvasId).toDataURL();
 		    link.download = filename;
 		}
+// ---------
+		var pcanvas= document.getElementById('promoteCanvas');
+		var pcontext= pcanvas.getContext('2d');
+		var pimgs=[];
+		var pimagesOK=0;
+		var pimageURLs	= [];
+
+		var pimgUrl1 = '';
+		var pimgUrl2 = '';
+		var pe,ptipe,pprofile_x,pprofile_y,ptext_x,ptext_y;
+		var pObjProp=[];
+
 		document.getElementById('promoteDownload').addEventListener('click', function() {
-		    downloadCanvas(this, 'promoteCanvas',  '<?php echo $fbid ?>.png');
+		    downloadCanvas(this, 'promoteCanvas',  'promote_<?php echo $fbid ?>.png');
 		}, false);
 
 		function promoteOptionClick(el) {
-			imageURLs=[];
-			objProp=[];
+			pimageURLs=[];
+			pObjProp=[];
 			console.log('promoteOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
 
-			e = el;
+			pe = el;
 			src = $(el).attr('src');
-			profile_x = $(el).attr('profileX');
-			profile_y	= $(el).attr('profileY');
+			pprofile_x = $(el).attr('profileX');
+			pprofile_y	= $(el).attr('profileY');
 			profile_w = $(el).attr('profileW');
 			profile_h = $(el).attr('profileH');
-			text_x = $(el).attr('textX');
-			text_y = $(el).attr('textY');
-			objProp.push(profile_x);
-			objProp.push(profile_y);
-			objProp.push(profile_w);
-			objProp.push(profile_h);
-			objProp.push(text_x);
-			objProp.push(text_y);
+			ptext_x = $(el).attr('textX');
+			ptext_y = $(el).attr('textY');
+			pObjProp.push(pprofile_x);
+			pObjProp.push(pprofile_y);
+			pObjProp.push(profile_w);
+			pObjProp.push(profile_h);
+			pObjProp.push(ptext_x);
+			pObjProp.push(ptext_y);
 
 			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
 			var templUrl = src ;
-			imageURLs.push(templUrl); // layer 1 (bottom) : promote
-			imageURLs.push(profUrl); // layer 2 (top) : profile
-			loadImage(promoteObjProp);
-			// $('#promoteDownload').removeAttr('style');
+			pimageURLs.push(templUrl); // layer 1 (bottom) : promote
+			pimageURLs.push(profUrl); // layer 2 (top) : profile
+			promoteLoadImage(promoteObjProp);
 		}
 
 		function promoteObjProp() {
 			console.log('promoteObjProp');
-			console.log(objProp);
-			canvas.width = imgs[0].naturalWidth;
-			canvas.height = imgs[0].naturalHeight;
+			console.log(pObjProp);
+			pcanvas.width = pimgs[0].naturalWidth;
+			pcanvas.height = pimgs[0].naturalHeight;
 
-		 	var imgX = objProp[0];
-		 	var imgY = objProp[1];
-		 	var imgW = objProp[2];
-		 	var imgH = objProp[3];
-		 	var txtX = objProp[4];
-		 	var txtY = objProp[5];
-			context.drawImage(imgs[0],0,0);
-			context.drawImage(imgs[1],imgX,imgY,imgW,imgH);
-			context.fillText("<?php echo $nama_lengkap;?>", txtX, txtY); // 400
-			context.fillText("<?php echo $userByFbId['no_wa'];?>", txtX,parseFloat(txtY)+20); // 420
-			context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", txtX,parseFloat(txtY)+40); //440
+		 	var imgX = pObjProp[0];
+		 	var imgY = pObjProp[1];
+		 	var imgW = pObjProp[2];
+		 	var imgH = pObjProp[3];
+		 	var txtX = pObjProp[4];
+		 	var txtY = pObjProp[5];
+			pcontext.drawImage(pimgs[0],0,0);
+			pcontext.drawImage(pimgs[1],imgX,imgY,imgW,imgH);
+			pcontext.fillText("<?php echo $nama_lengkap;?>", txtX, txtY); // 400
+			pcontext.fillText("<?php echo $userByFbId['no_wa'];?>", txtX,parseFloat(txtY)+20); // 420
+			pcontext.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", txtX,parseFloat(txtY)+40); //440
 		}
 
-		function loadImage(promoteObjPropx) {
-			console.log('loadImage');
+		function promoteLoadImage(promoteObjPropx) {
+			console.log('promoteLoadImage');
 			console.log('-- sebelum hapus ');
-				console.log(imgs);
-				console.log(imageURLs);
-			imgs=[];
+				console.log(pimgs);
+				console.log(pimageURLs);
+			pimgs=[];
 			console.log('-- setelah hapus ');
-				console.log(imgs);
-				console.log(imageURLs);
+				console.log(pimgs);
+				console.log(pimageURLs);
 
 			$('#promotePreview').attr('style','display:none');
 			// context.clearRect(0, 0, canvas.width, canvas.height);
 
-			console.log(imageURLs.length);
-			for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
-				var img = new Image(); // create a new image an push it into the imgs[] array
-				imgs.push(img);
+			console.log(pimageURLs.length);
+			for (var i=0; i<pimageURLs.length; i++) { // iterate through the pimageURLs array and create new images for each
+				var img = new Image(); // create a new image an push it into the pimgs[] array
+				pimgs.push(img);
 
 				img.crossOrigin = "anonymous";
 				img.onload = function(){// when this image loads, call this img.onload
-					imagesOK++; // this img loaded, increment the image counter
-					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
+					pimagesOK++; // this img loaded, increment the image counter
+					if (pimagesOK>=pimageURLs.length ) { // if we've loaded all images, call the callback
 						promoteObjPropx();
 						$('#promoteDownload').removeAttr('style');
 					}
@@ -556,120 +557,104 @@ if(isset($_POST['claim'])){
 					alert("failed load profile");
 				}
 
-				img.src = imageURLs[i]; // set img properties
+				img.src = pimageURLs[i]; // set img properties
 			}
 		}
 
-		function resetForm () {
+		function promoteResetForm () {
 			$('#promoteCanvas').html('');
 			$('#promotePreview').removeAttr('style');
 
-			imgs=[];
-			imagesOK=0;
-			imageURLs	= [];
-			imgUrl1 = '';
-			imgUrl2 = '';
-			e,tipe='',profile_x='',profile_y='';
-			objProp=[];
+			pimgs=[];
+			pimagesOK=0;
+			pimageURLs	= [];
+			pimgUrl1 = '';
+			pimgUrl2 = '';
+			pe,ptipe='',pprofile_x='',pprofile_y='';
+			pObjProp=[];
 		}
 
 		function promoteSave() {
 
 		}
 
-	// -- profile frame
-		var canvas= document.getElementById('frameCanvas');
-		var context= canvas.getContext('2d');
-		var imgs=[];
-		var imagesOK=0;
-		var imageURLs	= [];
+// profile frame
+		var fcanvas= document.getElementById('frameCanvas');
+		var fcontext= fcanvas.getContext('2d');
+		var fimgs=[];
+		var fimagesOK=0;
+		var fimageURLs	= [];
 
-		var imgUrl1 = '';
-		var imgUrl2 = '';
-		var e,tipe,profile_x,profile_y,text_x,text_y;
-		var objProp=[];
+		var fimgUrl1 = '';
+		var fimgUrl2 = '';
+		var pe,ftipe,fprofile_x,fprofile_y,ftext_x,ftext_y;
+		var fObjProp=[];
 
-		function downloadCanvas(link, canvasId, filename) {
-				link.href = document.getElementById(canvasId).toDataURL();
-				link.download = filename;
-		}
-		document.getElementById('promoteDownload').addEventListener('click', function() {
-				downloadCanvas(this, 'promoteCanvas',  '<?php echo $fbid ?>.png');
-		}, false);
-
-		function promoteOptionClick(el) {
-			imageURLs=[];
-			objProp=[];
-			console.log('promoteOptionClick');
+		function frameOptionClick(el) {
+			fimageURLs=[];
+			fObjProp=[];
+			console.log('frameOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
 
-			e = el;
+			fe = el;
 			src = $(el).attr('src');
-			profile_x = $(el).attr('profileX');
-			profile_y	= $(el).attr('profileY');
+			fprofile_x = $(el).attr('profileX');
+			fprofile_y	= $(el).attr('profileY');
 			profile_w = $(el).attr('profileW');
 			profile_h = $(el).attr('profileH');
-			text_x = $(el).attr('textX');
-			text_y = $(el).attr('textY');
-			objProp.push(profile_x);
-			objProp.push(profile_y);
-			objProp.push(profile_w);
-			objProp.push(profile_h);
-			objProp.push(text_x);
-			objProp.push(text_y);
+			ftext_x = $(el).attr('textX');
+			ftext_y = $(el).attr('textY');
+			fObjProp.push(fprofile_x);
+			fObjProp.push(fprofile_y);
+			fObjProp.push(profile_w);
+			fObjProp.push(profile_h);
+			fObjProp.push(ftext_x);
+			fObjProp.push(ftext_y);
 
 			var profUrl = 'https://graph.facebook.com/'+<?php echo $fbid; ?>+'/picture?type=large';
 			var templUrl = src ;
-			imageURLs.push(templUrl); // layer 1 (bottom) : promote
-			imageURLs.push(profUrl); // layer 2 (top) : profile
-			loadImage(promoteObjProp);
-			// $('#promoteDownload').removeAttr('style');
+			fimageURLs.push(profUrl); // layer 1 (bottom) : prof
+			fimageURLs.push(templUrl); // layer 2 (top) : frame
+			frameLoadImage(frameObjProp);
 		}
 
-		function promoteObjProp() {
-			console.log('promoteObjProp');
-			console.log(objProp);
-			canvas.width = imgs[0].naturalWidth;
-			canvas.height = imgs[0].naturalHeight;
+		function frameObjProp() {
+			console.log('frameObjProp');
+			console.log(fObjProp);
+			fcanvas.width = fimgs[1].naturalWidth;
+			fcanvas.height = fimgs[1].naturalHeight;
+			console.log(fcanvas.width);
+			console.log(fimgs[1].naturalWidth);
 
-			var imgX = objProp[0];
-			var imgY = objProp[1];
-			var imgW = objProp[2];
-			var imgH = objProp[3];
-			var txtX = objProp[4];
-			var txtY = objProp[5];
-			context.drawImage(imgs[0],0,0);
-			context.drawImage(imgs[1],imgX,imgY,imgW,imgH);
-			context.fillText("<?php echo $nama_lengkap;?>", txtX, txtY); // 400
-			context.fillText("<?php echo $userByFbId['no_wa'];?>", txtX,parseFloat(txtY)+20); // 420
-			context.fillText("http://"+"<?php echo $userByFbId['username'];?>"+".sukses.family", txtX,parseFloat(txtY)+40); //440
+			fcontext.drawImage(fimgs[0],0,0,fcanvas.width,fcanvas.height);
+			fcontext.drawImage(fimgs[1],0,0);
 		}
 
-		function loadImage(promoteObjPropx) {
-			console.log('loadImage');
+		function frameLoadImage(frameObjPropx) {
+			console.log('frameLoadImage');
 			console.log('-- sebelum hapus ');
-				console.log(imgs);
-				console.log(imageURLs);
-			imgs=[];
+				console.log(fimgs);
+				console.log(fimageURLs);
+			fimgs=[];
 			console.log('-- setelah hapus ');
-				console.log(imgs);
-				console.log(imageURLs);
+				console.log(fimgs);
+				console.log(fimageURLs);
 
-			$('#promotePreview').attr('style','display:none');
+			$('#framePreview').attr('style','display:none');
 			// context.clearRect(0, 0, canvas.width, canvas.height);
 
-			console.log(imageURLs.length);
-			for (var i=0; i<imageURLs.length; i++) { // iterate through the imageURLs array and create new images for each
-				var img = new Image(); // create a new image an push it into the imgs[] array
-				imgs.push(img);
+			console.log(fimageURLs.length);
+			for (var i=0; i<fimageURLs.length; i++) { // iterate through the fimageURLs array and create new images for each
+				var img = new Image(); // create a new image an push it into the fimgs[] array
+				fimgs.push(img);
 
 				img.crossOrigin = "anonymous";
 				img.onload = function(){// when this image loads, call this img.onload
-					imagesOK++; // this img loaded, increment the image counter
-					if (imagesOK>=imageURLs.length ) { // if we've loaded all images, call the callback
-						promoteObjPropx();
-						$('#promoteDownload').removeAttr('style');
+					fimagesOK++; // this img loaded, increment the image counter
+					if (fimagesOK>=fimageURLs.length ) { // if we've loaded all images, call the callback
+						frameObjPropx();
+						$('#frameDownload').removeAttr('style');
 					}
 				};
 
@@ -677,24 +662,29 @@ if(isset($_POST['claim'])){
 					alert("failed load profile");
 				}
 
-				img.src = imageURLs[i]; // set img properties
+				img.src = fimageURLs[i]; // set img properties
 			}
 		}
 
-		function resetForm () {
-			$('#promoteCanvas').html('');
-			$('#promotePreview').removeAttr('style');
+		function frameResetForm () {
+			$('#frameCanvas').html('');
+			$('#framePreview').removeAttr('style');
 
-			imgs=[];
-			imagesOK=0;
-			imageURLs	= [];
-			imgUrl1 = '';
-			imgUrl2 = '';
-			e,tipe='',profile_x='',profile_y='';
-			objProp=[];
+			fimgs=[];
+			fimagesOK=0;
+			fimageURLs	= [];
+			fimgUrl1 = '';
+			fimgUrl2 = '';
+			fe,ftipe='',fprofile_x='',fprofile_y='';
+			fObjProp=[];
 		}
 
+		document.getElementById('frameDownload').addEventListener('click', function() {
+		    downloadCanvas(this, 'frameCanvas',  'frame_<?php echo $fbid ?>.png');
+		}, false);
 
+
+// tour
 		var tour = new Tour({
 			backdrop:true,
 			steps: [{
