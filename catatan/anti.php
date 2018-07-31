@@ -196,7 +196,7 @@ if(isset($_POST['claim'])){
 				border: 5px dashed #CCC;
 				/* border: 5px dashed #CCC; */
 				cursor: pointer;
-				opacity: .5;
+				opacity: .3;
 			}
 			.imageOption.active{
 				border: 5px solid orange;
@@ -272,7 +272,16 @@ if(isset($_POST['claim'])){
 												<!-- profile pict. -->
 												<div class="info info-horizontal" id="panel1">
 													<div class="icon">
-														<img src="<?php echo 'https://graph.facebook.com/'.$fbid.'/picture?type=large'; ?>">
+														<!-- <img src=" -->
+														<?php
+														// vd($_SESSION);
+														if(isset($_SESSION['foto_profil'])){
+															echo '<img src="../uploads/profile_frame/'.$_SESSION['foto_profil'].'"/>';
+														}else{
+															echo '<img src="https://graph.facebook.com/'.$fbid.'/picture?type=large"/>';
+														}
+														?>
+														<!-- "> -->
 													</div>
 													<div class="description">
 														<h4><?php echo $nama_lengkap;?> </h4>
@@ -309,8 +318,9 @@ if(isset($_POST['claim'])){
 
 															<!-- promote content -->
 														  <div class="tab-pane active" id="1a">
+																<br>
 																<form id="image-form" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
-																	<label>Promote Picture</label>
+																	<!-- <label>Promote Picture</label> -->
 
 																	<!-- preview options -->
 																	<div id="imageOptions" class="form-group">
@@ -362,8 +372,9 @@ if(isset($_POST['claim'])){
 
 															<!-- profile content -->
 															<div class="tab-pane" id="2a">
-																<form id="image-form" onsubmit="frameSave();return false;" enctype="multipart/form-data">
-																	<label>Promote Picture</label>
+																<br>
+																<form id="frameForm" onsubmit="frameSave();return false;" method="post" enctype="multipart/form-data">
+																	<!-- <label>Promote Picture</label> -->
 
 																	<!-- preview options -->
 																	<div id="imageOptions" class="form-group">
@@ -377,6 +388,7 @@ if(isset($_POST['claim'])){
 																						src="../uploads/frame_template/'.$res2['nama'].'"
 																						class="imageOption"
 																						data-design="0"
+																						frame_id="'.$res2['id_param'].'"
 																					/>';
 																					$i2++;
 																			}
@@ -386,6 +398,8 @@ if(isset($_POST['claim'])){
 																	<div class="form-group">
 																		<div>
 																			<img id="framePreview" width="250" src="../uploads/no_preview.png" alt="" />
+																			<input type="hidden" name="id_frame" id="id_frame" >
+																			<input type="hidden" name="foto_profile" id="foto_profile" >
 																		</div>
 
 																		<div class="divCanvas">
@@ -597,6 +611,14 @@ if(isset($_POST['claim'])){
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
 
+			$('#id_frame').val(
+				$(el).attr('frame_id')
+			);
+
+			var frameDataURL = fcanvas.toDataURL('image/png');
+			$('#foto_profile').val(frameDataURL);
+
+
 			fe = el;
 			src = $(el).attr('src');
 			fprofile_x = $(el).attr('profileX');
@@ -622,13 +644,13 @@ if(isset($_POST['claim'])){
 		function frameObjProp() {
 			console.log('frameObjProp');
 			console.log(fObjProp);
-			fcanvas.width = fimgs[1].naturalWidth;
-			fcanvas.height = fimgs[1].naturalHeight;
+			fcanvas.width = fimgs[0].naturalWidth;
+			fcanvas.height = fimgs[0].naturalHeight;
 			console.log(fcanvas.width);
 			console.log(fimgs[1].naturalWidth);
 
-			fcontext.drawImage(fimgs[0],0,0,fcanvas.width,fcanvas.height);
-			fcontext.drawImage(fimgs[1],0,0);
+			fcontext.drawImage(fimgs[0],0,0);
+			fcontext.drawImage(fimgs[1],0,0,fcanvas.width,fcanvas.height);
 		}
 
 		function frameLoadImage(frameObjPropx) {
@@ -683,6 +705,22 @@ if(isset($_POST['claim'])){
 		    downloadCanvas(this, 'frameCanvas',  'frame_<?php echo $fbid ?>.png');
 		}, false);
 
+		function frameSave() {
+			// alert('hai');
+			$.ajax({
+				url:'anti_proses.php',
+			  type:'post',
+			  data: {
+			    'photo':$('#foto_profile').val(),
+					'dataForm':$('#frameForm').serialize()
+			  },
+				dataType:'json',
+				success:function(dt){
+					console.log(dt);
+					location.reload();
+				}
+			});
+		}
 
 // tour
 		var tour = new Tour({
