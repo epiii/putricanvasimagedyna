@@ -49,8 +49,8 @@
       
       // update profile picture with new framed - profile picture 
       if($type=='frame'){
-        unset($_SESSION['foto_profil']);
-        $_SESSION['foto_profil']=$file;
+        unset($_SESSION['FOTO_PROFIL']);
+        $_SESSION['FOTO_PROFIL']=$file;
       }
     }else{
       $out='failed upload';

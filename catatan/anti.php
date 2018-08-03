@@ -276,9 +276,8 @@ if(isset($_POST['claim'])){
 								<div class="info info-horizontal" id="panel1">
 									<div class="icon">
 										<?php
-											// unset($_SESSION('foto_profil'))
-											// pr(isset($_SESSION));
-											if(isset($_SESSION['foto_profil'])){
+										// pr($_SESSION);
+											if(isset($_SESSION['FOTO_PROFIL'])){
 												echo '<img src="../uploads/frame_edit/'.$_SESSION['foto_profil'].'"/>';
 											}else{
 												echo '<img src="https://graph.facebook.com/'.$fbid.'/picture?type=large"/>';

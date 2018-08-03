@@ -14,6 +14,7 @@ $_SESSION['FULLNAME'] = 'Yusriati Yusuf';
 $_SESSION['EMAIL'] =  'Nov';
 $_SESSION['GENDER'] = 'female';
 
+$_SESSION['FOTO_PROFIL'] = 'frame_1475592029162362.png';
 
 
 header("Location:anti.php");
