@@ -2,34 +2,58 @@
   include '../conf.php';
   include 'fungsi.php';
   session_start();
+  
+  $imgData = $_POST['photo'];
+  $out='invalid_request';
+  
+  // check type png or not 
+  if (strpos($imgdata, 'data:image/png;base64') == 0) {
+  // upload file --------------------
+    
+    // file submitted
+    $imgData = str_replace('data:image/png;base64,', '', $imgData);
+    $imgData = str_replace(' ', '+', $imgData);
+    $imgData = base64_decode($imgData);
 
-  $data = $_POST['photo'];
-  list($type, $data) = explode(';', $data);
-  list(, $data)      = explode(',', $data);
-  $data = base64_decode($data);
+    // data submitted
+    $dataForm = explode('&',$_POST['dataForm']);
+    
+      $types  = explode('=',$dataForm[0]);
+      $type   = $types[1];
+      
+      $idTemplates  = explode('=',$dataForm[1]);
+      $idTemplate   = $idTemplates[1];
+      
+      $dir = '../uploads/'.$type.'_edit/';
+      $file= $type.'_'.$_SESSION['FBID'].'.png';
+      $fullpath = $dir.$file;
+      // vd($dir);
+    
+    // delete image if exist
+    if (file_exists($fullpath)) {
+      unlink($fullpath);
+    }
 
-  $dir = '../uploads/profile_frame/';
-  $file= 'profile_frame_'.$_SESSION['FBID'].'.png';
-  // $file= 'profile_frame_'.time().'.png';
-  $uplo = file_put_contents($dir.$file, $data);
+    // upload file 
+    $uplo = file_put_contents($fullpath, $imgData, LOCK_EX);
 
-  $dataForm=explode('=',$_POST['dataForm']);
-  $idFrame=explode('&',$dataForm[1]);
-
-  if ($uplo) {
-    $s='UPDATE pengguna SET
-        foto_profil ="'.$file.'",
-        id_frame ='.$idFrame[0].'
-        WHERE id_fb="'.$_SESSION['FBID'].'"';
-    $e=mysqli_query($con,$s);
-    $out=$e?'success save db':'failed save db';
-    $_SESSION['foto_profil']=$file;
-  }else{
-    $out='failed upload';
-  }
-  echo json_encode($out);
-  // pr($uplo?'success':'failed');
-  // pr($uplo?'success':'failed');
-  // file_put_contents($_SERVER['DOCUMENT_ROOT'] . "/photos/".time().'.png', $data);
-  // die;
+    // if success upload file then "save data" to db
+    if ($uplo) { 
+    // save to db --------------------
+      $s='UPDATE pengguna SET
+            foto_'.$type.' ="'.$file.'",
+            id_'.$type.'='.$idTemplate.'
+          WHERE id_fb ="'.$_SESSION['FBID'].'"';
+      $e=mysqli_query($con,$s);
+      $out=$e?'success':'failed save db';
+      
+      // update profile picture with new framed - profile picture 
+      if($type=='frame'){
+        unset($_SESSION['foto_profil']);
+        $_SESSION['foto_profil']=$file;
+      }
+    }else{
+      $out='failed upload';
+    }
+  }  echo json_encode(['status'=>$out]);
 ?>

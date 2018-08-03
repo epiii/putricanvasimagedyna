@@ -1,4 +1,6 @@
-<?php session_start();
+<?php
+
+session_start();
 include "../conf.php"; include "fungsi.php"; $notif_cl = '';
 $fbid = $_SESSION['FBID'];
 $nama_lengkap = $_SESSION['FULLNAME'];
@@ -47,10 +49,12 @@ if($usr != 'no'){
 			$data_pgg = kunjungan($con,$db);
 			$judul = "Dashboard Kunjungan";
 		}
-		if($hala == 'img'){
+		if($hala == 'profmote'){
 			// // var_dump($data_pgg);
 			// $data_pgg = checkFbProfile($con,$fbid);
-			// $judul = "Dashboard Kunjungan";
+			$data_pgg = profmote($con,$fbid);
+			// pr($data_pggx);
+			$judul = "gambar";
 		}
 	}else{
 		$judul = 'Daftar Tagihan';
@@ -264,206 +268,91 @@ if(isset($_POST['claim'])){
 	        <div class="main">
 	            <div class="section section-white section-search">
 	                <div class="container">
-                    <?php echo $pencairan;?>
-										<div class="row">
+                    	<?php echo $pencairan;?>
+						<div class="row">
 
-											<!-- panel : left -->
-											<div class="col-md-6 col-xs-12 text-center" >
-												<!-- profile pict. -->
-												<div class="info info-horizontal" id="panel1">
-													<div class="icon">
-														<!-- <img src=" -->
-														<?php
-														// vd($_SESSION);
-														if(isset($_SESSION['foto_profil'])){
-															echo '<img src="../uploads/profile_frame/'.$_SESSION['foto_profil'].'"/>';
-														}else{
-															echo '<img src="https://graph.facebook.com/'.$fbid.'/picture?type=large"/>';
-														}
-														?>
-														<!-- "> -->
-													</div>
-													<div class="description">
-														<h4><?php echo $nama_lengkap;?> </h4>
-														<p><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></p>
-													</div>
-												</div>
+							<div class="col-md-6 col-xs-12 text-center" >
+							<!-- <div class="col-md-12 text-center" > -->
+								<div class="info info-horizontal" id="panel1">
+									<div class="icon">
+										<?php
+											// unset($_SESSION('foto_profil'))
+											// pr(isset($_SESSION));
+											if(isset($_SESSION['foto_profil'])){
+												echo '<img src="../uploads/frame_edit/'.$_SESSION['foto_profil'].'"/>';
+											}else{
+												echo '<img src="https://graph.facebook.com/'.$fbid.'/picture?type=large"/>';
+											}
+										?>
+									</div>
+									<div class="description">
+										<h4><?php echo $nama_lengkap;?> </h4>
+										<p><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i><i class="fa fa-star-o"></i></p>
+									</div>
+								</div>
 
-												<!-- user -->
-												<h6 class="text-muted">Followup Mitra</h6>
-												<div class="progress">
-												  <div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
-													<span class="sr-only">Progress</span>
-												  </div>
-												</div>
-                        <ul class="list-unstyled follows">
-													<?php echo $data_pgg;?>
-                        </ul>
-                        <div class="text-missing">
-                            <h5 class="text-muted">Mari pantau gerakan digital marketing downline kita melalui facebook. Berteman dengan mereka dengan klik tombol facebook </h5>
-                        </div>
-                      </div> <!-- end of :: panel : left -->
+								<h6 class="text-muted">Followup Mitra</h6>
+								<div class="progress">
+									<div class="progress-bar progress-bar-info" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;">
+										<span class="sr-only">Progress</span>
+									</div>
+								</div>
 
-											<!-- panel : right -->
-											<div id="imageDiv" class="col-md-6 col-xs-12 text-center">
+								<ul class="list-unstyled follows">
+									<?php echo $data_pgg;?>
+								</ul>
 
-													<!-- preview result image -->
-													<div id="exTab1" class="containerx">
-														<ul  class="nav nav-pills">
-															<li class="active"> <a  href="#1a" data-toggle="tab">Promote</a></li>
-															<li><a href="#2a" data-toggle="tab">Profile</a></li>
-														</ul>
+								<div class="text-missing">
+									<h5 class="text-muted">Mari pantau gerakan digital marketing downline kita melalui facebook. Berteman dengan mereka dengan klik tombol facebook </h5>
+								</div>
+							</div>
+					
+						</div>
+					</div>
+				</div>
+			</div>
 
-														<div class="tab-content xclearfix">
-
-															<!-- promote content -->
-														  <div class="tab-pane active" id="1a">
-																<br>
-																<form id="image-form" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
-																	<!-- <label>Promote Picture</label> -->
-
-																	<!-- preview options -->
-																	<div id="imageOptions" class="form-group">
-																		<?php
-																			$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
-																			$exe = mysqli_query($con,$sql);
-																			$i=0;
-																			while ($res=mysqli_fetch_assoc($exe)) {
-																				$param3s = explode(',',trim($res['param3'],' '));
-																				$x= $param3s[0];
-																				$y= $param3s[1];
-																				$w= $param3s[2];
-																				$h= $param3s[3];
-																				$xx= $param3s[4];
-																				$yy= $param3s[5];
-																				// pr($x);
-																					echo'<img onclick="promoteOptionClick(this);"
-																						src="../uploads/promote_template/'.$res['nama'].'"
-																						tipe="'.$res['param1'].'"
-																						profileX="'.$x.'"
-																						profileY="'.$y.'"
-																						profileW="'.$w.'"
-																						profileH="'.$h.'"
-																						textX="'.$xx.'"
-																						textY="'.$yy.'"
-																						class="imageOption"
-																						data-design="0"
-																					/>';
-																					// class="imageOption '.($i==0?'active':'').'"
-																					$i++;
-																			}
-																		 ?>
-																	</div>
-
-																	<div class="form-group">
-																		<div>
-																			<img id="promotePreview" width="250" src="../uploads/no_preview.png" alt="" />
-																		</div>
-
-																		<div class="divCanvas">
-																			<a id="promoteDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
-																			<canvas id="promoteCanvas"></canvas>
-																		</div>
-																	</div>
-
-																	<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
-																</form><!-- end of : promote FORM -->
-															</div>
-
-															<!-- profile content -->
-															<div class="tab-pane" id="2a">
-																<br>
-																<form id="frameForm" onsubmit="frameSave();return false;" method="post" enctype="multipart/form-data">
-																	<!-- <label>Promote Picture</label> -->
-
-																	<!-- preview options -->
-																	<div id="imageOptions" class="form-group">
-																		<?php
-																			$sql2 = 'SELECT * FROM parameter WHERE param1 = "frame" ORDER BY nama ASC';
-																			$exe2 = mysqli_query($con,$sql2);
-																			// pr($exe2);
-																			$i2=0;
-																			while ($res2=mysqli_fetch_assoc($exe2)) {
-																					echo'<img onclick="frameOptionClick(this);"
-																						src="../uploads/frame_template/'.$res2['nama'].'"
-																						class="imageOption"
-																						data-design="0"
-																						frame_id="'.$res2['id_param'].'"
-																					/>';
-																					$i2++;
-																			}
-																		 ?>
-																	</div>
-
-																	<div class="form-group">
-																		<div>
-																			<img id="framePreview" width="250" src="../uploads/no_preview.png" alt="" />
-																			<input type="hidden" name="id_frame" id="id_frame" >
-																			<input type="hidden" name="foto_profile" id="foto_profile" >
-																		</div>
-
-																		<div class="divCanvas">
-																			<a id="frameDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
-																			<canvas id="frameCanvas"></canvas>
-																		</div>
-																	</div>
-
-																	<button class="btn btn-primary" type="submit" name="submit" xid="image-submit">Save</button>
-																</form><!-- end of : promote FORM -->
-															</div>
-
-														</div>
-												  </div>
-
-
-											</div> <!-- end of :: panel : left -->
-
-	                </div>
-		            </div>
-	        </div>
-	    </div>
-
-				<footer class="footer-demo section-white-gray">
-		        <div class="container">
-		            <nav class="pull-left">
-		                <ul>
-		                    <li>
-		                      <a href="?t=dp" id="panel2">
-		                          Komisi
-		                      </a>
-		                    </li>
-		                    <li>
-		                      <a href="?t=mt" id="panel3">
-		                         CaMit
-		                      </a>
-		                    </li>
-		                    <li>
-		                      <a href="?b=" id="panel4">
-		                          Home
-		                      </a>
-		                    </li>
-												<li>
-													<a href="../daftar/pembayaran.php" id="panel5">
-														Upgrade
-													</a>
-												</li>
-												<li>
-													 <a href="?t=kun" id="panel6">
-														Kunjungan
-													</a>
-												</li>
-												<!-- <li>
-													<a href="?t=img" id="panel6">
-														Image
-													</a>
-												</li> -->
-		        </ul>
-		      </nav>
-		      <div class="copyright pull-right">
-		          &copy; DTS Jakarta
-		      </div>
-		  </div>
-		</footer>
+			<footer class="footer-demo section-white-gray">
+				<div class="container">
+					<nav class="pull-left">
+						<ul>
+							<li>
+								<a href="?t=dp" id="panel2">
+									Komisi
+								</a>
+							</li>
+							<li>
+								<a href="?t=mt" id="panel3">
+									CaMit
+								</a>
+							</li>
+							<li>
+								<a href="?b=" id="panel4">
+									Home
+								</a>
+							</li>
+							<li>
+								<a href="../daftar/pembayaran.php" id="panel5">
+									Upgrade
+								</a>
+							</li>
+							<li>
+								<a href="?t=kun" id="panel6">
+									Kunjungan
+								</a>
+							</li>
+							<li>
+								<a href="?t=profmote" id="panel6">
+									profile & promote
+								</a>
+							</li>
+						</ul>
+					</nav>
+					<div class="copyright pull-right">
+						&copy; DTS Jakarta
+					</div>
+				</div>
+			</footer>
 
 	</body>
 
@@ -498,6 +387,10 @@ if(isset($_POST['claim'])){
 			console.log('promoteOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
+
+			$('#id_promote').val(
+				$(el).attr('promote_id')
+			);
 
 			pe = el;
 			src = $(el).attr('src');
@@ -589,8 +482,22 @@ if(isset($_POST['claim'])){
 		}
 
 		function promoteSave() {
-
-		}
+			$.ajax({
+				url:'anti_proses.php',
+			  	type:'post',
+			  	data: {
+					'photo':pcanvas.toDataURL('image/png'),
+					'dataForm':$('#promoteForm').serialize()
+				},
+				dataType:'json',
+				success:function(dt){
+					console.log(dt);
+					if(dt.status=='success'){
+						alert(dt.status);
+					}
+				}
+			});
+			}
 
 // profile frame
 		var fcanvas= document.getElementById('frameCanvas');
@@ -605,6 +512,7 @@ if(isset($_POST['claim'])){
 		var fObjProp=[];
 
 		function frameOptionClick(el) {
+			// var frameDataURL = '';
 			fimageURLs=[];
 			fObjProp=[];
 			console.log('frameOptionClick');
@@ -614,11 +522,7 @@ if(isset($_POST['claim'])){
 			$('#id_frame').val(
 				$(el).attr('frame_id')
 			);
-
-			var frameDataURL = fcanvas.toDataURL('image/png');
-			$('#foto_profile').val(frameDataURL);
-
-
+			
 			fe = el;
 			src = $(el).attr('src');
 			fprofile_x = $(el).attr('profileX');
@@ -706,18 +610,22 @@ if(isset($_POST['claim'])){
 		}, false);
 
 		function frameSave() {
-			// alert('hai');
 			$.ajax({
 				url:'anti_proses.php',
-			  type:'post',
-			  data: {
-			    'photo':$('#foto_profile').val(),
+			  	type:'post',
+			  	data: {
+					'photo':fcanvas.toDataURL('image/png'),
 					'dataForm':$('#frameForm').serialize()
-			  },
+				},
 				dataType:'json',
 				success:function(dt){
 					console.log(dt);
-					location.reload();
+					if(dt.status=='success'){
+						alert(dt.status);
+						setTimeout(function(){
+							location.reload();
+						}, 200);
+					}
 				}
 			});
 		}

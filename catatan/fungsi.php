@@ -1,5 +1,5 @@
 <?php
-
+	session_start();
 // debug variable
 	function pr($var){
 		echo "<pre>";
@@ -79,21 +79,20 @@ function tagihan($con,$db,$usr,$halaman,$batas,$th1,$th2){
 			$sewa ='6bln ';
 		}
 		$hsl = $hsl.'
-								<li>
-                                    <div class="row">
-                                        <div class="col-md-2 col-md-offset-1 col-xs-5 col-xs-offset-1">
-                                            <img src="../poto/'.$pgg['id_fb'].'.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
-                                        </div>
-                                        <div class="col-md-6 col-xs-4 description">
-                                            <h5>'.$pgg['nama_fb'].'<br /><small>'.status($pgg['paytren_id'],$pgg['tgl_lunas'],$sewa).'</small></h5>
-                                        </div>
-                                        <div class="col-md-2 col-xs-2">
-                                            <a class="btn btn-icon btn-danger" href="https://api.whatsapp.com/send?phone='.ke_wa($pgg['no_wa']).'&text=Hallo%20'.$pgg['nama_dpn'].'%2C%20"><i class="fa fa-phone-square"></i></a>
-											<a class="btn btn-icon btn-info" href="https://www.facebook.com/'.$pgg['id_fb'].'"><i class="fa fa-facebook"></i></a>
-                                        </div>
-                                    </div>
-                                </li>
-			';
+				<li>
+					<div class="row">
+						<div class="col-md-2 col-md-offset-1 col-xs-5 col-xs-offset-1">
+							<img src="../poto/'.$pgg['id_fb'].'.jpg" alt="Circle Image" class="img-circle img-no-padding img-responsive">
+						</div>
+						<div class="col-md-6 col-xs-4 description">
+							<h5>'.$pgg['nama_fb'].'<br /><small>'.status($pgg['paytren_id'],$pgg['tgl_lunas'],$sewa).'</small></h5>
+						</div>
+						<div class="col-md-2 col-xs-2">
+							<a class="btn btn-icon btn-danger" href="https://api.whatsapp.com/send?phone='.ke_wa($pgg['no_wa']).'&text=Hallo%20'.$pgg['nama_dpn'].'%2C%20"><i class="fa fa-phone-square"></i></a>
+							<a class="btn btn-icon btn-info" href="https://www.facebook.com/'.$pgg['id_fb'].'"><i class="fa fa-facebook"></i></a>
+						</div>
+					</div>
+				</li>';
 	}
 	for($i=1;$i<=$jmlhalaman;$i++){
 		if ($i != $halaman){
@@ -170,6 +169,119 @@ function kunjungan($con,$db){
 				</div>
 			</div>
 		</div>';
+	return $hsl;
+}
+
+function profmote($con,$db){
+	$hsl = $hsl.'
+		<div class="row">
+			<div class="col-lg-12 col-xs-12">
+				<div id="exTab1" class="containerx">
+					<ul  class="nav nav-pills">
+						<li class="active"> <a  href="#1a" data-toggle="tab">Promote</a></li>
+						<li><a href="#2a" data-toggle="tab">Profile</a></li>
+					</ul>
+
+					<div class="tab-content xclearfix">
+
+					  <div class="tab-pane active" id="1a">
+							<br>
+							<div id="frameAlert" style="display:none;" class="alert alert-success alert-dismissible fade in">
+								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+								<strong>Success!</strong> ,profile has been set
+							</div>
+							<form id="promoteForm" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
+								<div id="imageOptions" class="form-group">';
+									$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
+									$exe = mysqli_query($con,$sql);
+									$i=0;
+									while ($res=mysqli_fetch_assoc($exe)) {
+										$param3s = explode(',',trim($res['param3'],' '));
+										$x= $param3s[0];
+										$y= $param3s[1];
+										$w= $param3s[2];
+										$h= $param3s[3];
+										$xx= $param3s[4];
+										$yy= $param3s[5];
+										// pr($x);
+											$hsl.='<img onclick="promoteOptionClick(this);"
+												src="../uploads/promote_template/'.$res['nama'].'"
+												tipe="'.$res['param1'].'"
+												profileX="'.$x.'"
+												profileY="'.$y.'"
+												profileW="'.$w.'"
+												profileH="'.$h.'"
+												textX="'.$xx.'"
+												textY="'.$yy.'"
+												class="imageOption"
+												data-design="0"
+												promote_id="'.$res['id_param'].'"
+
+											/>';
+											$i++;
+										}
+								$hsl.='</div>
+								<div class="form-group">
+									<div>
+										<img id="promotePreview" width="250" src="../uploads/no_preview.png" alt="" />
+									</div>
+									<input type="hidden" name="tipe" id="tipe" value="promote" >
+									<input type="hidden" name="id_promote" id="id_promote" >
+
+									<div class="divCanvas">
+										<a id="promoteDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
+										<canvas id="promoteCanvas"></canvas>
+									</div>
+								</div>
+
+								<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+							</form>
+						</div>
+
+						<div class="tab-pane" id="2a">
+							<br>
+							<form id="frameForm" onsubmit="frameSave();return false;" method="post" enctype="multipart/form-data">
+								<div id="imageOptions" class="form-group">';
+										$getUserData= getUserByFbId($con,$_SESSION['FBID']);
+										$frameId = $getUserData['id_frame'];
+										$sql2 = 'SELECT * FROM parameter WHERE param1 = "frame" ORDER BY nama ASC';
+										$exe2 = mysqli_query($con,$sql2);
+										$i2=0;
+										while ($res2=mysqli_fetch_assoc($exe2)) {
+												$hsl.='<img onclick="frameOptionClick(this);"
+													src="../uploads/frame_template/'.$res2['nama'].'"
+													class="imageOption
+													'.($res2['id_param']==$frameId?'active':'').'"
+													tipe="'.$res2['param1'].'"
+													data-design="0"
+													frame_id="'.$res2['id_param'].'"
+												/>';
+												$i2++;
+										}
+								$hsl.='</div>
+								<div class="form-group">
+									<div>
+										<img id="framePreview" width="250" src="../uploads/no_preview.png" alt="" />
+									</div>
+									<input type="hidden" name="tipe" id="tipe" value="frame" >
+									<input type="hidden" name="id_frame" id="id_frame" >
+
+									<div class="divCanvas">
+										<a id="frameDownload" style="display:none;" href="#" class="downloadBtn">Download</a>
+										<canvas id="frameCanvas"></canvas>
+									</div>
+								</div>
+
+								<button class="btn btn-primary" type="submit" name="submit" xid="image-submit">Save</button>
+							</form>
+						</div>
+
+					</div>
+			  </div>
+		  </div>
+	  </div>
+		';
+		// pr($hsl);
 	return $hsl;
 }
 
