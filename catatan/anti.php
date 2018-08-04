@@ -184,15 +184,14 @@ if(isset($_POST['claim'])){
 	    <script src="../bootstrap3/js/bootstrap.min.js"></script>
 	    <script src="../assets/bootstrap-tour/js/bootstrap-tour.min.js"></script>
 
-
 	    <!--     Fonts and icons     -->
 	    <link href="../font-awesome/css/font-awesome.min.css" rel="stylesheet">
 	    <link href='http://fonts.googleapis.com/css?family=Montserrat' rel='stylesheet' type='text/css'>
-		<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
-		new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
-		j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
-		'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
-		})(window,document,'script','dataLayer','GTM-WV7W67N');</script>
+			<script>(function(w,d,s,l,i){w[l]=w[l]||[];w[l].push({'gtm.start':
+			new Date().getTime(),event:'gtm.js'});var f=d.getElementsByTagName(s)[0],
+			j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
+			'https://www.googletagmanager.com/gtm.js?id='+i+dl;f.parentNode.insertBefore(j,f);
+			})(window,document,'script','dataLayer','GTM-WV7W67N');</script>
 
 		<style media="screen">
 			.imageOption{
@@ -210,7 +209,6 @@ if(isset($_POST['claim'])){
 			.imageOption:hover {
 				opacity: 1;
 			}
-
 
 			/* .container .btn { */
 			.divCanvas .downloadBtn {
@@ -231,6 +229,21 @@ if(isset($_POST['claim'])){
 			.downloadBtn:hover {
 				opacity: 1;
 			}
+
+	/* spinner / loader  */
+			.pageLoader {
+				position: fixed;
+				left: 0px;
+				top: 0px;
+				width: 100%;
+				height: 100%;
+				z-index: 9999;
+				/* background: url(fb_loader.gif) center no-repeat #fff; */
+				background: url(../assets/img/loaderF.gif) center no-repeat #fff;
+				background-size: 40px 40px;
+				opacity: 0.7;
+			}
+
 		</style>
 	</head>
 
@@ -265,20 +278,22 @@ if(isset($_POST['claim'])){
 	    </nav>
 
 	    <div class="wrapper">
-	        <div class="main">
-	            <div class="section section-white section-search">
-	                <div class="container">
-                    	<?php echo $pencairan;?>
+      	<div class="main">
+        	<div class="section section-white section-search">
+          	<div class="container">
+          		<?php echo $pencairan;?>
 						<div class="row">
+
+							<div class="pageLoader"></div>
 
 							<div class="col-md-6 col-xs-12 text-center" >
 							<!-- <div class="col-md-12 text-center" > -->
 								<div class="info info-horizontal" id="panel1">
 									<div class="icon">
 										<?php
-										// pr($_SESSION);
+										// destroy_session($_SESSION);
 											if(isset($_SESSION['FOTO_PROFIL'])){
-												echo '<img src="../uploads/frame_edit/'.$_SESSION['foto_profil'].'"/>';
+												echo '<img src="../uploads/frame_edit/'.$_SESSION['FOTO_PROFIL'].'">';
 											}else{
 												echo '<img src="https://graph.facebook.com/'.$fbid.'/picture?type=large"/>';
 											}
@@ -297,7 +312,11 @@ if(isset($_POST['claim'])){
 									</div>
 								</div>
 
-								<ul class="list-unstyled follows">
+								<div class="overlay">
+							    <div id="loading-img"></div>
+								</div>
+
+								<ul xid="dynaContent" class="list-unstyled follows">
 									<?php echo $data_pgg;?>
 								</ul>
 
@@ -305,7 +324,7 @@ if(isset($_POST['claim'])){
 									<h5 class="text-muted">Mari pantau gerakan digital marketing downline kita melalui facebook. Berteman dengan mereka dengan klik tombol facebook </h5>
 								</div>
 							</div>
-					
+
 						</div>
 					</div>
 				</div>
@@ -358,7 +377,27 @@ if(isset($_POST['claim'])){
 	<script>
 		$(document).ready(function(){
 			console.log('ready');
+			hideLoader();
+			// setTimeout(function(){
+			// 	$('.pageLoader').attr('style','display:none');
+			// }, 700);
 		});
+
+		function hideLoader() {
+			setTimeout(function(){
+				$('.pageLoader').attr('style','display:none');
+			}, 700);
+		}
+
+		function reloadPage() {
+			location.reload();
+		}
+
+		function showLoader() {
+			// setTimeout(function(){
+				$('.pageLoader').removeAttr('style');
+			// }, 700);
+		}
 // ---------
 		function downloadCanvas(link, canvasId, filename) {
 		    link.href = document.getElementById(canvasId).toDataURL();
@@ -381,6 +420,9 @@ if(isset($_POST['claim'])){
 		}, false);
 
 		function promoteOptionClick(el) {
+			$('#promoteButton').removeAttr('style');
+
+			showLoader();
 			pimageURLs=[];
 			pObjProp=[];
 			console.log('promoteOptionClick');
@@ -456,11 +498,13 @@ if(isset($_POST['claim'])){
 					if (pimagesOK>=pimageURLs.length ) { // if we've loaded all images, call the callback
 						promoteObjPropx();
 						$('#promoteDownload').removeAttr('style');
+						hideLoader();
 					}
 				};
 
 				img.onerror=function(){ // notify if there's an error
-					alert("failed load profile");
+					alert("failed load profile, check your network");
+					hideLoader();
 				}
 
 				img.src = pimageURLs[i]; // set img properties
@@ -483,20 +527,23 @@ if(isset($_POST['claim'])){
 		function promoteSave() {
 			$.ajax({
 				url:'anti_proses.php',
-			  	type:'post',
-			  	data: {
+				dataType:'json',
+		  	type:'post',
+		  	data: {
 					'photo':pcanvas.toDataURL('image/png'),
 					'dataForm':$('#promoteForm').serialize()
-				},
-				dataType:'json',
-				success:function(dt){
-					console.log(dt);
-					if(dt.status=='success'){
+				},beforeSend:function(){
+					showLoader();
+				},success:function(dt){
+					setTimeout(function(){
+						$('.pageLoader').attr('style','display:none');
+					}, 700);
+					setTimeout(function(){
 						alert(dt.status);
-					}
+					}, 700);
 				}
 			});
-			}
+		}
 
 // profile frame
 		var fcanvas= document.getElementById('frameCanvas');
@@ -512,8 +559,11 @@ if(isset($_POST['claim'])){
 
 		function frameOptionClick(el) {
 			// var frameDataURL = '';
+			$('#frameButton').removeAttr('style');
+			showLoader();
 			fimageURLs=[];
 			fObjProp=[];
+			$('#dynaContent').addClass('spinner');
 			console.log('frameOptionClick');
 			$(".imageOption.active").removeClass("active");
 			$(el).addClass("active");
@@ -521,7 +571,7 @@ if(isset($_POST['claim'])){
 			$('#id_frame').val(
 				$(el).attr('frame_id')
 			);
-			
+
 			fe = el;
 			src = $(el).attr('src');
 			fprofile_x = $(el).attr('profileX');
@@ -580,11 +630,13 @@ if(isset($_POST['claim'])){
 					if (fimagesOK>=fimageURLs.length ) { // if we've loaded all images, call the callback
 						frameObjPropx();
 						$('#frameDownload').removeAttr('style');
+						hideLoader();
 					}
 				};
 
 				img.onerror=function(){ // notify if there's an error
-					alert("failed load profile");
+					alert("failed load profile, check your network");
+					hideLoader();
 				}
 
 				img.src = fimageURLs[i]; // set img properties
@@ -611,19 +663,23 @@ if(isset($_POST['claim'])){
 		function frameSave() {
 			$.ajax({
 				url:'anti_proses.php',
-			  	type:'post',
-			  	data: {
+		  	type:'post',
+				dataType:'json',
+		  	data: {
 					'photo':fcanvas.toDataURL('image/png'),
 					'dataForm':$('#frameForm').serialize()
-				},
-				dataType:'json',
-				success:function(dt){
-					console.log(dt);
-					if(dt.status=='success'){
+				},beforeSend:function(){
+					showLoader();
+				},success:function(dt){
+					setTimeout(function(){
+						$('.pageLoader').attr('style','display:none');
+					}, 700);
+					if(dt.status!='success'){
 						alert(dt.status);
+					} else {
 						setTimeout(function(){
-							location.reload();
-						}, 200);
+							reloadPage();
+						}, 900);
 					}
 				}
 			});

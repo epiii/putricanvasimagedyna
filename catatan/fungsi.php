@@ -176,6 +176,7 @@ function profmote($con,$db){
 	$hsl = $hsl.'
 		<div class="row">
 			<div class="col-lg-12 col-xs-12">
+
 				<div id="exTab1" class="containerx">
 					<ul  class="nav nav-pills">
 						<li class="active"> <a  href="#1a" data-toggle="tab">Promote</a></li>
@@ -183,13 +184,8 @@ function profmote($con,$db){
 					</ul>
 
 					<div class="tab-content xclearfix">
-
 					  <div class="tab-pane active" id="1a">
 							<br>
-							<div id="frameAlert" style="display:none;" class="alert alert-success alert-dismissible fade in">
-								<a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
-								<strong>Success!</strong> ,profile has been set
-							</div>
 							<form id="promoteForm" onsubmit="promoteSave();return false;" enctype="multipart/form-data">
 								<div id="imageOptions" class="form-group">';
 									$sql = 'SELECT * FROM parameter WHERE param1 = "promote" ORDER BY nama ASC';
@@ -233,8 +229,7 @@ function profmote($con,$db){
 										<canvas id="promoteCanvas"></canvas>
 									</div>
 								</div>
-
-								<button class="btn btn-primary" type="submit" name="submit" id="image-submit">Save</button>
+								<input type="submit" name="submit" id="promoteButton" value="save" style="display:none;" />
 							</form>
 						</div>
 
@@ -271,8 +266,8 @@ function profmote($con,$db){
 										<canvas id="frameCanvas"></canvas>
 									</div>
 								</div>
+								<input type="submit" name="submit" id="frameButton" value="save" style="display:none;" />
 
-								<button class="btn btn-primary" type="submit" name="submit" xid="image-submit">Save</button>
 							</form>
 						</div>
 
@@ -281,6 +276,8 @@ function profmote($con,$db){
 		  </div>
 	  </div>
 		';
+		// <button class="btn btn-primary" type="submit" name="submit" id="promoteButton">Save</button>
+
 		// pr($hsl);
 	return $hsl;
 }
