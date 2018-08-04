@@ -3,7 +3,7 @@
 -- http://www.phpmyadmin.net
 --
 -- Host: localhost
--- Generation Time: Jul 31, 2018 at 09:49 AM
+-- Generation Time: Aug 04, 2018 at 10:36 PM
 -- Server version: 5.7.21-0ubuntu0.16.04.1
 -- PHP Version: 7.0.28-0ubuntu0.16.04.1
 
@@ -51,15 +51,16 @@ CREATE TABLE `pengguna` (
   `mlm_type` text NOT NULL,
   `id_frame` int(11) DEFAULT NULL,
   `id_promote` int(11) DEFAULT NULL,
-  `foto_profil` text
+  `foto_frame` text,
+  `foto_promote` text
 ) ENGINE=MyISAM DEFAULT CHARSET=latin1;
 
 --
 -- Dumping data for table `pengguna`
 --
 
-INSERT INTO `pengguna` (`id_fb`, `nama_dpn`, `nama_blk`, `nama_fb`, `no_wa`, `gender`, `email`, `tgl_exp`, `nominal`, `tgl_join`, `username`, `paytren_id`, `jaguar`, `referal`, `web_training`, `marketing`, `tgl_lunas`, `id`, `dna_id`, `dna_seq`, `dna_level`, `mlm_type`, `id_frame`, `id_promote`, `foto_profil`) VALUES
-('1475592029162362', 'Yusriati', 'Yusuf', 'Yusriati Yusuf', '085267531945', 'female', 'Nov', '2020-10-16 02:52:09', 193572, '2017-10-16 14:52:09', 'yusriati', 'VP0430174', 'bukan', 'iman', 'lunas', NULL, '2018-03-30', 69, 'AAA001AAK', 'Huruf', '2', 'pyt', 24, NULL, 'profile_frame_1475592029162362.png');
+INSERT INTO `pengguna` (`id_fb`, `nama_dpn`, `nama_blk`, `nama_fb`, `no_wa`, `gender`, `email`, `tgl_exp`, `nominal`, `tgl_join`, `username`, `paytren_id`, `jaguar`, `referal`, `web_training`, `marketing`, `tgl_lunas`, `id`, `dna_id`, `dna_seq`, `dna_level`, `mlm_type`, `id_frame`, `id_promote`, `foto_frame`, `foto_promote`) VALUES
+('1475592029162362', 'Yusriati', 'Yusuf', 'Yusriati Yusuf', '085267531945', 'female', 'Nov', '2020-10-16 02:52:09', 193572, '2017-10-16 14:52:09', 'yusriati', 'VP0430174', 'bukan', 'iman', 'lunas', NULL, '2018-03-30', 69, 'AAA001AAK', 'Huruf', '2', 'pyt', 26, 22, 'frame_1475592029162362.png', 'promote_1475592029162362.png');
 
 --
 -- Indexes for dumped tables
