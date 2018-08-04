@@ -360,7 +360,7 @@ if(isset($_POST['claim'])){
 								</a>
 							</li>
 							<li>
-								<a href="?t=profmote" id="panel6">
+								<a href="?t=profmote" id="panel7">
 									profile & promote
 								</a>
 							</li>
@@ -378,9 +378,6 @@ if(isset($_POST['claim'])){
 		$(document).ready(function(){
 			console.log('ready');
 			hideLoader();
-			// setTimeout(function(){
-			// 	$('.pageLoader').attr('style','display:none');
-			// }, 700);
 		});
 
 		function hideLoader() {
@@ -394,9 +391,7 @@ if(isset($_POST['claim'])){
 		}
 
 		function showLoader() {
-			// setTimeout(function(){
-				$('.pageLoader').removeAttr('style');
-			// }, 700);
+			$('.pageLoader').removeAttr('style');
 		}
 // ---------
 		function downloadCanvas(link, canvasId, filename) {
@@ -712,7 +707,10 @@ if(isset($_POST['claim'])){
 				element: "#panel6",
 				title: "button kunjungan",
 				content: "untuk melihat total pengunjung web anda"
-
+			},{
+				element: "#panel7",
+				title: "button gambar",
+				content: "untuk memilih template 'frame' dan 'promote' foto profil"
 			}]
 		});
 		tour.init();	// Initialize the tour
